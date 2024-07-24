@@ -7,8 +7,7 @@ export const create = async (req, res) => {
         const categoy = await Category.create({
             name: req.body.name,
             slug: slugify(req.body.name, "-"),
-        });
-
+        }); 
         return res.status(StatusCodes.CREATED).json(categoy);
     } catch (error) {
         console.log(error);

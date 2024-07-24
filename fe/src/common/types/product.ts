@@ -1,12 +1,16 @@
 export interface IProduct {
     _id?: number | string
-    // id?: number,
     name: string
-    category?: string
+    category: string
     price: number
-
+    image?: string
+    gallery?: string[]
     description?: string
+    tags?: string[]
     discount?: number
-    featured?: boolean
     countInStock?: number
+    featured?: boolean
+    attributes?: string[]
+    
+   
 }
