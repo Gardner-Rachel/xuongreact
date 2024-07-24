@@ -12,9 +12,9 @@ import orderRouter from "./routers/order";
 const app = express();
 dotenv.config();
 // middleware
-app.use(express.urlencoded({
-    extended: true,
-}));
+// app.use(express.urlencoded({
+//     extended: true,
+// }));
 app.use(express.json());
 app.use(cors());
 app.use(morgan("tiny"));

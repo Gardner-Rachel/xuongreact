@@ -3,5 +3,8 @@
 @layer tailwind-base {
     @tailwind base;
 }
+@layer antd {
+    @import "ant/dist/reset.css";
+}
 @tailwind components;
 @tailwind utilities;
