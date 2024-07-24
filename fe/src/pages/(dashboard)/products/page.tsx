@@ -1,8 +1,9 @@
 import { IProduct } from '@/common/types/product';
+import SkeletonTable from '@/components/SkeletonTable';
 import instance from '@/configs/axios';
 import { PlusCircleFilled } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Popconfirm, Table } from 'antd';
+import { Button, message, Popconfirm, Skeleton, Table } from 'antd';
 import React from 'react'
 import { render } from 'react-dom';
 import { Link } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { Link } from 'react-router-dom';
 
 const ProductsManagementPage = () => {
 
+    const [messageApi, contextHolder] = message.useMessage();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["products"],
@@ -22,16 +24,30 @@ const ProductsManagementPage = () => {
     }));
 
     const { mutate } = useMutation({
-        mutationFn: (_id: number | string) => instance.delete(`/products/${_id}`),
+        mutationFn: async (_id: number | string) => {
+            try {
+                return await instance.delete(`/products/${_id}`)
+            } catch (error) {
+                throw new Error("Xóa sả phẩm thất bại");
+            }
+        },
         onSuccess: () => {
+            messageApi.open({
+                type: "success",
+                content: "Sản phẩm đã được xóa thành công",
+            });
             queryClient.invalidateQueries({
                 queryKey: ["products"],
             });
         },
         onError: (error) => {
-            throw error;
+            messageApi.open({
+                type: "success",
+                content: error.message,
+            })
         },
     })
+
     const columns = [
         {
             key: "name",
@@ -45,19 +61,23 @@ const ProductsManagementPage = () => {
         },
         {
             key: "action",
-            render: (_: any, product: IProduct) => {
+            render: (_: any, product: any) => {
+                const { key } = product;
                 return (
-                    <>
+                    <div className='flex space-x-3'>
                         <Popconfirm
                             title="Xóa sản phâm"
                             description="Bạn có chắc chắn muốn xóa không"
-                            onConfirm={() => mutate(product._id)}
+                            onConfirm={() => mutate(key)}
                             okText="Yes"
                             cancelText="No"
                         >
                             <Button danger>Delete</Button>
                         </Popconfirm>
-                    </>
+                        <Button>
+                            <Link to={`/admin/products/${product._id}/edit`}>Cập nhật</Link>
+                        </Button>
+                    </div>
                 )
             }
         }
@@ -68,6 +88,7 @@ const ProductsManagementPage = () => {
     if (isError) return <div>{error.message}</div>;
     return (
         <div>
+            {contextHolder}
             <div className='flex items-center justify-between mb-5 '>
                 <h1 className='text-2xl font-semibold'>Quản lý sản phẩm</h1>
                 <Button type='primary'>
@@ -76,7 +97,9 @@ const ProductsManagementPage = () => {
                     </Link>
                 </Button>
             </div>
-            <Table dataSource={dataSource} columns={columns} />
+            <Skeleton loading={isLoading} active>
+                <Table dataSource={dataSource} columns={columns} />
+            </Skeleton>
         </div>
     )
 }

@@ -1,4 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "antd";
+
 
 const SkeletonTable = () => {
     return (

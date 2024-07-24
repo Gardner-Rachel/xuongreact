@@ -1,10 +1,10 @@
 import instance from '@/configs/axios';
 import { BackwardFilled, Loading3QuartersOutlined } from '@ant-design/icons';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Form, FormProps, Input, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 type FieldType = {
     name?: string;
@@ -12,24 +12,39 @@ type FieldType = {
     description?: string;
 };
 
-const ProductAddPage = () => {
-    const [ messageApi, contextHolder ] = message.useMessage();
-    const [ form ] = Form.useForm();
+const ProductEditPage = () => {
+    const { _id } = useParams();
+    const [messageApi, contextHolder] = message.useMessage();
+    const queryClient = useQueryClient();
+
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ["product", _id],
+        queryFn: async () => {
+            try {
+                return await instance.get(`/products/${_id}`)
+            } catch (error) {
+                throw new Error("Lấy sản phẩm thất bại")
+            }
+        }
+    })
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (product: FieldType) => {
             try {
-                return await instance.post(`/products`, product)
+                return await instance.put(`/products/${_id}`, product)
             } catch (error) {
-                throw new Error("Thêm sản phẩm thất bại");
+                throw new Error("Cập nhật sản phẩm thất bại");
             }
         },
         onSuccess: () => {
             messageApi.open({
                 type: "success",
-                content: "Thêm sản phẩm thành công",
+                content: "Cập nhật sản phẩm thành công",
             });
-            form.resetFields();
+            queryClient.invalidateQueries({
+                queryKey: ["product", _id],
+
+            })
         },
         onError: (error) => {
             messageApi.open({
@@ -44,11 +59,14 @@ const ProductAddPage = () => {
         mutate(values);
     };
 
+    if (isLoading) return <div>...Loading</div>
+    if (isError) return <div>{error.message}</div>
+
     return (
         <div>
             {contextHolder}
             <div className='flex items-center justify-between mb-5 '>
-                <h1 className='text-2xl font-semibold'>Thêm sản phẩm</h1>
+                <h1 className='text-2xl font-semibold'>Cập nhật: {data?.data?.data.name}</h1>
                 <Button type='primary'>
                     <Link to={`/admin/products`} >
                         <BackwardFilled /> Quay lại
@@ -56,13 +74,15 @@ const ProductAddPage = () => {
                 </Button>
             </div>
             <div className='max-w-4xl mx-auto'>
-            <Form
-                    form={form}
+                <Form
                     name="basic"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600 }}
+                    initialValues={{ ...data?.data?.data }}
                     onFinish={onFinish}
+                // onFinishFailed={onFinishFailed}
+                // autoComplete="off"
                 >
                     <Form.Item<FieldType>
                         label="Tên sản phẩm"
@@ -106,4 +126,4 @@ const ProductAddPage = () => {
     )
 }
 
-export default ProductAddPage;
+export default ProductEditPage;
