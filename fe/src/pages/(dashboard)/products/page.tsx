@@ -3,6 +3,8 @@ import instance from '@/configs/axios';
 import { PlusCircleFilled } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, message, Popconfirm, Skeleton, Table } from 'antd';
+import { SortOrder } from 'antd/es/table/interface';
+import { render } from 'react-dom';
 import { Link } from 'react-router-dom';
 
 
@@ -10,6 +12,7 @@ const ProductsManagementPage = () => {
 
     const [messageApi, contextHolder] = message.useMessage();
     const queryClient = useQueryClient();
+
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["products"],
         queryFn: () => instance.get(`/products`),
@@ -20,6 +23,7 @@ const ProductsManagementPage = () => {
         ...product,
     }));
 
+    
     const { mutate } = useMutation({
         mutationFn: async (_id: number | string) => {
             try {
@@ -52,16 +56,23 @@ const ProductsManagementPage = () => {
             .map((name: string) => ({ text: name, value: name }));
     };
 
-    const columns = [
+    const columns  = [
         {
             key: "name",
             title: "Tên sản phẩm",
             dataIndex: "name",
+            ellipsis: true,
             filterSearch: true,
             filters: data ? createFilters(data?.data?.data) : [],
-            onFilter: (value: string, product: IProduct) => product.name.includes(value),
             sorter: (a: IProduct, b: IProduct) => a.name.localeCompare(b.name),
+            onFilter: (value: string , product: IProduct) => product.name.includes(value),
             sortDirections : ["ascend", "descend"],
+        },
+        {
+            key: "category",
+            title: "Danh mục",
+            dataIndex: "category", 
+            ellipsis: true, 
         },
         {
             key: "price",
@@ -69,25 +80,66 @@ const ProductsManagementPage = () => {
             dataIndex: "price",
         },
         {
+            key: "image",
+            title: "Ảnh",
+            dataIndex: "image",
+        },
+        // {
+        //     key: "gallery",
+        //     title: "Gallery",
+        //     dataIndex: "gallery",
+        // },
+        {
+            key: "description",
+            title: "Mô tả",
+            dataIndex: "description",
+        },
+        {
+            key: "discount",
+            title: "Giá khuyến mãi",
+            dataIndex: "discount",
+        },
+        {
+            key: "countInStock",
+            title: "Số lượng sản phẩm",
+            dataIndex: "countInStock",
+        },
+        // {
+        //     key: "featured",
+        //     title: "Sản phẩm nổi bật",
+        //     dataIndex: "featured",
+        // },
+        {
+            key: "tags",
+            title: "Tags",
+            dataIndex: "tags",
+        },
+        // {
+        //     key: "attributes",
+        //     title: "Thuộc tính",
+        //     dataIndex: "attributes",
+        // },
+        {
             key: "action",
+            title: "Action",
             render: (_: any, product: any) => {
                 const { _id } = product;
                 return (
-                    <div className='flex space-x-3'>
-                        <Popconfirm
-                            title="Xóa sản phâm"
-                            description="Bạn có chắc chắn muốn xóa không"
-                            onConfirm={() => mutate(_id)}
-                            okText="Yes"
-                            cancelText="No"
-                        >
-                            <Button danger>Delete</Button>
-                        </Popconfirm>
+                    <div className='flex flex-col space-y-2'>
                         <Button>
                             <Link to={`/admin/products/${product._id}/edit`}>Cập nhật</Link>
                         </Button>
+                        <Popconfirm
+                            title="Xóa sản phẩm"
+                            description="Bạn có chắc chắn muốn xóa không?"
+                            onConfirm={() => mutate(_id)}
+                            okText="Có"
+                            cancelText="Không"
+                        >
+                            <Button danger>Delete</Button>
+                        </Popconfirm>
                     </div>
-                )
+                );
             }
         }
     ];

@@ -109,7 +109,7 @@ const ProductAddPage = () => {
                         name="price"
                         rules={[{ required: true, message: 'Giá sản phẩm bắt buộc phải có!' }]}
                     >
-                        <Input disabled={isPending} />
+                        <InputNumber disabled={isPending} />
                     </Form.Item>
 
                     <Form.Item<FieldType> label="Ảnh sản phẩm" name="image">

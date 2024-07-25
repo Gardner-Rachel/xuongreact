@@ -30,17 +30,14 @@ function getItem(
     } as MenuItem;
 }
 
-// const items: MenuItem[] = [
-//   getItem('Option 1', '1', <PieChartOutlined />),
-//   getItem('Option 2', '2', <DesktopOutlined />),
-//   getItem('User', 'sub1', <UserOutlined />, [
-//     getItem('Tom', '3'),
-//     getItem('Bill', '4'),
-//     getItem('Alex', '5'),
-//   ]),
-//   getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-//   getItem('Files', '9', <FileOutlined />),
-// ];
+const items: MenuItem[] = [
+    getItem(<NavLink to="/admin">Thống kê</NavLink>, "1", <PieChartOutlined />),
+    getItem("Sản phẩm", "sub1", <DesktopOutlined />, [
+        getItem(<NavLink to="/admin/products">Danh sách</NavLink>, "2-1"),
+        getItem(<NavLink to="/admin/products/add">Thêm</NavLink>, "2-2"),
+    ]),
+];
+
 
 const LayoutAdmin: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -52,7 +49,8 @@ const LayoutAdmin: React.FC = () => {
         <Layout style={{ minHeight: '100vh' }}>
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                 <div className="demo-logo-vertical" />
-                <Menu
+                 <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={items} />
+                {/* <Menu
                     theme="dark"
                     mode="inline"
                     defaultSelectedKeys={['1']}
@@ -73,7 +71,7 @@ const LayoutAdmin: React.FC = () => {
                             label: 'nav 3',
                         },
                     ]}
-                />
+                /> */}
             </Sider>
             <Layout>
                 <Header style={{ padding: 0, background: colorBgContainer }} />

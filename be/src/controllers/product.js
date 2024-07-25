@@ -1,9 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 import Product from "../models/product";
+import slugify from "slugify";
 
 export const create = async (req, res) => {
     try {
-        const product = await Product.create(req.body);
+        const product = await Product.create({
+            ...req.body,
+            slug: slugify(req.body.name, "-"),
+        });
 
         return res.status(StatusCodes.CREATED).json(product);
     } catch (error) {
