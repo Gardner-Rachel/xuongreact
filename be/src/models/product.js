@@ -11,7 +11,6 @@ const productSchema = new mongoose.Schema(
         slug: {
             type: String,
             unique: true,
-            lowercase: true,
         },
         category: {
             type: mongoose.Schema.Types.ObjectId,
@@ -47,12 +46,12 @@ const productSchema = new mongoose.Schema(
         tags: {
             type: Array,
         },
-        attributes: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Attribute",
-            },
-        ],
+        // attributes: [
+        //     {
+        //         type: mongoose.Schema.Types.ObjectId,
+        //         ref: "Attribute",
+        //     },
+        // ],
     },
     { timestamps: true, versionKey: false }
 );

@@ -1,11 +1,8 @@
 import { IProduct } from '@/common/types/product';
-import SkeletonTable from '@/components/SkeletonTable';
 import instance from '@/configs/axios';
 import { PlusCircleFilled } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, message, Popconfirm, Skeleton, Table } from 'antd';
-import React from 'react'
-import { render } from 'react-dom';
 import { Link } from 'react-router-dom';
 
 
@@ -48,11 +45,23 @@ const ProductsManagementPage = () => {
         },
     })
 
+    const createFilters = (products: IProduct[]) => {
+        return products
+            .map((product: IProduct) => product.name)
+            .filter((value: string, index: number, self: string[]) => self.indexOf(value) === index)
+            .map((name: string) => ({ text: name, value: name }));
+    };
+
     const columns = [
         {
             key: "name",
             title: "Tên sản phẩm",
             dataIndex: "name",
+            filterSearch: true,
+            filters: data ? createFilters(data?.data?.data) : [],
+            onFilter: (value: string, product: IProduct) => product.name.includes(value),
+            sorter: (a: IProduct, b: IProduct) => a.name.localeCompare(b.name),
+            sortDirections : ["ascend", "descend"],
         },
         {
             key: "price",
@@ -62,13 +71,13 @@ const ProductsManagementPage = () => {
         {
             key: "action",
             render: (_: any, product: any) => {
-                const { key } = product;
+                const { _id } = product;
                 return (
                     <div className='flex space-x-3'>
                         <Popconfirm
                             title="Xóa sản phâm"
                             description="Bạn có chắc chắn muốn xóa không"
-                            onConfirm={() => mutate(key)}
+                            onConfirm={() => mutate(_id)}
                             okText="Yes"
                             cancelText="No"
                         >
@@ -97,11 +106,11 @@ const ProductsManagementPage = () => {
                     </Link>
                 </Button>
             </div>
-            <Skeleton loading={isLoading} active>
-                <Table dataSource={dataSource} columns={columns} />
-            </Skeleton>
+                <Skeleton loading={isLoading} active>
+                    <Table dataSource={dataSource} columns={columns} />
+                </Skeleton>
         </div>
-    )
+    )   
 }
 
 export default ProductsManagementPage;

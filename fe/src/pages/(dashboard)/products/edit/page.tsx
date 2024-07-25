@@ -1,37 +1,49 @@
 import instance from '@/configs/axios';
 import { BackwardFilled, Loading3QuartersOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Form, FormProps, Input, message } from 'antd';
+import { Button, Checkbox, Form, FormProps, Input, InputNumber, message, Select, Skeleton } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import React from 'react'
 import { Link, useParams } from 'react-router-dom';
 
 type FieldType = {
-    name?: string;
-    price?: number;
+    name: string;
+    category: string;
+    price: number;
+    image?: string;
+    gallery?: string[];
     description?: string;
+    discount?: number;
+    countInStock?: number;
+    featured?: boolean;
+    tags?: string[];
+    attributes?: string[];
 };
 
 const ProductEditPage = () => {
-    const { _id } = useParams();
+    const { id } = useParams();
     const [messageApi, contextHolder] = message.useMessage();
     const queryClient = useQueryClient();
 
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ["product", _id],
+        queryKey: ["product", id],
         queryFn: async () => {
             try {
-                return await instance.get(`/products/${_id}`)
+                return await instance.get(`/products/${id}`)
             } catch (error) {
                 throw new Error("Lấy sản phẩm thất bại")
             }
         }
     })
 
+    const { data: categories } = useQuery({
+        queryKey: ["categories"],
+        queryFn: () => instance.get(`/categories`),
+    });
+
     const { mutate, isPending } = useMutation({
         mutationFn: async (product: FieldType) => {
             try {
-                return await instance.put(`/products/${_id}`, product)
+                return await instance.put(`/products/${id}`, product)
             } catch (error) {
                 throw new Error("Cập nhật sản phẩm thất bại");
             }
@@ -42,7 +54,7 @@ const ProductEditPage = () => {
                 content: "Cập nhật sản phẩm thành công",
             });
             queryClient.invalidateQueries({
-                queryKey: ["product", _id],
+                queryKey: ["product"],
 
             })
         },
@@ -66,7 +78,7 @@ const ProductEditPage = () => {
         <div>
             {contextHolder}
             <div className='flex items-center justify-between mb-5 '>
-                <h1 className='text-2xl font-semibold'>Cập nhật: {data?.data?.data.name}</h1>
+                <h1 className='text-2xl font-semibold'>Cập nhật: {data?.data?.name}</h1>
                 <Button type='primary'>
                     <Link to={`/admin/products`} >
                         <BackwardFilled /> Quay lại
@@ -74,53 +86,86 @@ const ProductEditPage = () => {
                 </Button>
             </div>
             <div className='max-w-4xl mx-auto'>
-                <Form
-                    name="basic"
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    style={{ maxWidth: 600 }}
-                    initialValues={{ ...data?.data?.data }}
-                    onFinish={onFinish}
-                // onFinishFailed={onFinishFailed}
-                // autoComplete="off"
-                >
-                    <Form.Item<FieldType>
-                        label="Tên sản phẩm"
-                        name="name"
-                        rules={[{ required: true, message: 'Tên sản phẩm bắt buộc phải có!' }]}
+            <Skeleton loading={isLoading}>
+                    <Form
+                        name="basic"
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        style={{ maxWidth: 600 }}
+                        onFinish={onFinish}
+                        autoComplete="off"
+                        initialValues={data?.data}
                     >
-                        <Input disabled={isPending} />
-                    </Form.Item>
+                        <Form.Item<FieldType>
+                            label="Tên sản phẩm"
+                            name="name"
+                            rules={[
+                                { required: true, message: "Tên sản phẩm bắt buộc phải nhập!" },
+                            ]}
+                        >
+                            <Input disabled={isPending} />
+                        </Form.Item>
+                        <Form.Item<FieldType> label="Danh mục" name="category">
+                            <Select
+                                options={categories?.data?.map(
+                                    (category: { _id: number | string; name: string }) => ({
+                                        value: category._id,
+                                        label: category.name,
+                                    })
+                                )}
+                            />
+                        </Form.Item>
+                        <Form.Item<FieldType>
+                            label="Giá sản phẩm"
+                            name="price"
+                            rules={[
+                                { required: true, message: "Tên sản phẩm bắt buộc phải nhập!" },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item<FieldType> label="Ảnh sản phẩm" name="image">
+                            <Input />
+                        </Form.Item>
+                        <Form.Item<FieldType> label="Gallery ảnh" name="gallery">
+                            <Input />
+                        </Form.Item>
 
-                    <Form.Item<FieldType>
-                        label="Giá sản phẩm"
-                        name="price"
-                        rules={[{ required: true, message: 'Giá sản phẩm bắt buộc phải có!' }]}
-                    >
-                        <Input disabled={isPending} />
-                    </Form.Item>
-
-                    <Form.Item<FieldType>
-                        label="Mô tả sản phẩm"
-                        name="description"
-                    >
-                        <TextArea rows={4} disabled={isPending} />
-                    </Form.Item>
-
-                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                        <Button type="primary" htmlType="submit" disabled={isPending}>
-                            {isPending ? (
-                                <>
-                                    <Loading3QuartersOutlined className='animate-spin mr-2'/>
-                                    Submit
-                                </>
-                            ) : (
-                                "Submit"
-                            )}
-                        </Button>
-                    </Form.Item>
-                </Form>
-
+                        <Form.Item<FieldType> label="Mô tả sản phẩm" name="description">
+                            <TextArea rows={4} />
+                        </Form.Item>
+                        <Form.Item<FieldType> label="Giá khuyến mại" name="discount">
+                            <InputNumber />
+                        </Form.Item>
+                        <Form.Item<FieldType> label="Số lượng sản phẩm" name="countInStock">
+                            <InputNumber />
+                        </Form.Item>
+                        <Form.Item<FieldType>
+                            label="Sản phẩm nổi bật"
+                            name="featured"
+                            valuePropName="checked"
+                        >
+                            <Checkbox />
+                        </Form.Item>
+                        <Form.Item<FieldType> label="Tags" name="tags">
+                            <Input />
+                        </Form.Item>
+                        <Form.Item<FieldType> label="Thuộc tính" name="attributes">
+                            <Input />
+                        </Form.Item>
+                        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                            <Button type="primary" htmlType="submit">
+                                {isPending ? (
+                                    <>
+                                        <Loading3QuartersOutlined className="animate-spin" /> Submit
+                                    </>
+                                ) : (
+                                    "Submit"
+                                )}
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Skeleton>
             </div>
         </div>
     )

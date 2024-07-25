@@ -6,11 +6,9 @@ export interface IProduct {
     image?: string
     gallery?: string[]
     description?: string
-    tags?: string[]
     discount?: number
     countInStock?: number
     featured?: boolean
+    tags?: string[]
     attributes?: string[]
-    
-   
 }
