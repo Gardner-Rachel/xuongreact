@@ -1,3 +1,6 @@
+import UserAddAdminPage from "@/pages/(dashboard)/auth/add/page";
+import UserEditAdminPage from "@/pages/(dashboard)/auth/edit/page";
+import UserAdminPage from "@/pages/(dashboard)/auth/page";
 import CategoryAddPage from "@/pages/(dashboard)/categorys/add/page";
 import CategoryEditPage from "@/pages/(dashboard)/categorys/edit/page";
 import CategoryManagementPage from "@/pages/(dashboard)/categorys/page";
@@ -30,6 +33,9 @@ const Router = () => {
                     <Route path="categories" element={<CategoryManagementPage />} />
                     <Route path="categories/add" element={<CategoryAddPage />} />
                     <Route path="categories/:id/edit" element={<CategoryEditPage />} />
+                    <Route path="users" element={<UserAdminPage />} />
+                    <Route path="users/add" element={<UserAddAdminPage />} />
+                    <Route path="users/:id/edit" element={<UserEditAdminPage />} />
                 </Route>
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>

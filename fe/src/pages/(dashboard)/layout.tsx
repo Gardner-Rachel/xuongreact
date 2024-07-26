@@ -42,6 +42,10 @@ const items: MenuItem[] = [
         getItem(<NavLink to="/admin/categories">Danh sách</NavLink>, "3-1"),
         getItem(<NavLink to="/admin/categories/add">Thêm danh mục</NavLink>, "3-2"),
     ]),
+    getItem("Tài khoản", "sub3", <UserOutlined />, [
+        getItem(<NavLink to="/admin/users">Danh sách</NavLink>, "4-1"),
+        getItem(<NavLink to="/admin/users/add">Thêm tài khoản</NavLink>, "4-2")
+    ]),
 ];
 
 

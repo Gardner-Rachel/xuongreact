@@ -85,3 +85,45 @@
         });
     };
     export const logout = async (req, res) => {};
+
+    export const getUsers = async (req, res) => {
+        try {
+            const users = await User.find({}, { password: 0 });
+            res.status(StatusCodes.OK).json(users);
+        } catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                messages: ["Không thể lấy danh sách người dùng"],
+            });
+        }
+    };
+
+    export const deleteUserById = async (req, res) => {
+        try {
+            const users = await User.findByIdAndDelete(req.params.id);
+            return res.status(StatusCodes.OK).json(users);
+        } catch (error) {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+        }
+    }
+
+    export const updateUserById = async (req, res) => {
+        try {
+            const users = await User.findByIdAndUpdate(req.params.id, req.body, { new: true});
+            return res.status(StatusCodes.OK).json(users)
+        } catch (error) {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+        }
+    }
+
+    export const getUserById = async (req, res) => {
+        try {
+            const users = await User.findById(req.params.id);
+            if (users.length === 0)
+                return res
+                    .status(StatusCodes.NOT_FOUND)
+                    .json({message: "Không tìm thấy tài khoản nào!"});
+                return res.status(StatusCodes.OK).json(users)
+        } catch (error) {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+        }
+    }

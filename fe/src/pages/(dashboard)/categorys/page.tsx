@@ -69,7 +69,7 @@ const CategoryManagementPage = () => {
         },
         {
             key: "action",
-            titl: "Action",
+            title: "Action",
             render: (_: any, category: any) => {
                 const {_id} = category;
                 return (
@@ -109,10 +109,10 @@ const CategoryManagementPage = () => {
     return (
         <div>
             {contextHolder}
-            <div className="flex iteams-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-5">
                 <h1 className="text-2xl font-semibold">Quản lý danh mục</h1>
                 <Button type="primary">
-                    <Link to={`/admin/categorys/add`}>
+                    <Link to={`/admin/categories/add`}>
                         <PlusCircleFilled /> Thêm danh mục
                     </Link>
                 </Button>

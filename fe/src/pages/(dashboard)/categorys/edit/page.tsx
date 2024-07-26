@@ -49,7 +49,7 @@ const CategoryEditPage = () => {
         },
         onError: (error) => {
             messageApi.open({
-                type: "success",
+                type: "error",
                 content: error.message,
             })
         }

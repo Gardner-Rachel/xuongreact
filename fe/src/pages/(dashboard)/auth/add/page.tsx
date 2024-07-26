@@ -1,46 +1,37 @@
 import instance from '@/configs/axios';
-import { Loading3QuartersOutlined } from '@ant-design/icons';
+import { BackwardFilled, Loading3QuartersOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { Button, Form, FormProps, Input, message } from 'antd';
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 type FieldType = {
     email: string;
     password: string;
+    confirmPassword: string;
+    name: string;
+    avatar?: string;
 }
 
-const Login = () => {
+const UserAddAdminPage = () => {
     const [form] = Form.useForm();
     const [ messageApi, contextHolder ] = message.useMessage();
-    const navigate = useNavigate();
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (register: FieldType) => {
             try {
-                const response = await instance.post(`/auth/signin`, register);
-                return response.data;
+                return await instance.post(`/auth/signup`, register)
             } catch (error) {
-                throw new Error("Đăng nhập thất bại.")
+                throw new Error("Đăng ký thất bại.")
             }
         },
-        onSuccess: (data) =>{
-          const { token, user } = data;
-          if (token && user) {
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
+        onSuccess: () =>{
             messageApi.open({
-              type: "success",
-              content: "Đăng nhập thành công",
+                type: "success",
+                content: "Đăng ký thành công",
             });
-            navigate(`/`);
-          } else {
-            messageApi.open({
-              type: "error",
-              content: "Dữ liệu không hợp lệ",
-            })
-          }
+            form.resetFields();
         },
         onError: (error) => {
             messageApi.open({
@@ -59,7 +50,12 @@ const Login = () => {
     <div>
         {contextHolder}
     <div className='flex items-center justify-between mb-5 '>
-        <h1 className='text-2xl font-semibold'>Register</h1>
+        <h1 className='text-2xl font-semibold'>Đăng ký</h1>
+        <Button type='primary'>
+            <Link to={`/admin/users`} >
+                <BackwardFilled /> Quay lại
+            </Link>
+        </Button>
     </div>
     <div className='max-w-4xl mx-auto'>
         <Form
@@ -75,7 +71,7 @@ const Login = () => {
             <Form.Item<FieldType>
                 label="Email"
                 name="email"
-                rules={[{ required: true, message: 'Email không đúng!' }]}
+                rules={[{ required: true, message: 'Email không đúng định dạng!' }]}
             >
                 <Input disabled={isPending} />
             </Form.Item>
@@ -83,9 +79,31 @@ const Login = () => {
             <Form.Item<FieldType>
                 label="Password"
                 name="password"
-                rules={[{ required: true, message: 'Password không đúng' }]}
+                rules={[{ required: true, message: 'Password không đúng định dạng!' }]}
             >
                 <Input.Password disabled={isPending} />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+                label="Confirm Password"
+                name="confirmPassword"
+                rules={[{ required: true, message: 'Confirm Password không đúng định dạng!' }]}
+            >
+                <Input.Password disabled={isPending} />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+                label="Name"
+                name="name"
+                rules={[{ required: true, message: 'Name không đúng định dạng!' }]}
+            >
+                <Input disabled={isPending} />
+            </Form.Item>
+            
+         
+
+            <Form.Item<FieldType> label="Avatar" name="avatar" >
+                <Input disabled={isPending} />
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
@@ -93,10 +111,10 @@ const Login = () => {
                     {isPending ? (
                         <>
                             <Loading3QuartersOutlined className='animate-spin mr-2' />
-                            Đăng nhập
+                            Đăng ký
                         </>
                     ) : (
-                        "Đăng nhập"
+                        "Đăng ký"
                     )}
                 </Button>
             </Form.Item>
@@ -107,4 +125,4 @@ const Login = () => {
   )
 }
 
-export default Login;
+export default UserAddAdminPage;
