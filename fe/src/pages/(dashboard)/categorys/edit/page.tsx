@@ -69,7 +69,7 @@ const CategoryEditPage = () => {
     <div className='flex items-center justify-between mb-5 '>
         <h1 className='text-2xl font-semibold'>Cập nhật: {data?.data?.name  }</h1>
         <Button type='primary'>
-            <Link to={`/admin/categorys`} >
+            <Link to={`/admin/categories`} >
                 <BackwardFilled /> Quay lại
             </Link>
         </Button>

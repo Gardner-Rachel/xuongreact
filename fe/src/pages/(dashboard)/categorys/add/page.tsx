@@ -48,7 +48,7 @@ const CategoryAddPage = () => {
     <div className='flex items-center justify-between mb-5 '>
         <h1 className='text-2xl font-semibold'>Thêm danh mục</h1>
         <Button type='primary'>
-            <Link to={`/admin/categorys`} >
+            <Link to={`/admin/categories`} >
                 <BackwardFilled /> Quay lại
             </Link>
         </Button>

@@ -95,7 +95,7 @@ const CategoryManagementPage = () => {
                             )}
                         </Popconfirm>
                         <Button>
-                            <Link to={`/admin/categorys/${_id}/edit`}>Cập nhật</Link>
+                            <Link to={`/admin/categories/${_id}/edit`}>Cập nhật</Link>
                         </Button>
                     </div>
                 );

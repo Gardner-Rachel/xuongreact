@@ -29,8 +29,6 @@ const ProductAddPage = () => {
         queryFn: () => instance.get(`/categories`),
     });
 
-    console.log(categories);
-    
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (product: FieldType) => {

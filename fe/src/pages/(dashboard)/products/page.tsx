@@ -13,6 +13,16 @@ const ProductsManagementPage = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const queryClient = useQueryClient();
 
+    const { data: categories } = useQuery({
+        queryKey: ["categories"],
+        queryFn: () => instance.get(`/categories`),
+    });
+
+    const categoriesData = categories?.data?.reduce((categoryName: any, category: { _id: number | string; name: string }) => {
+        categoryName[category._id] = category.name;
+        return categoryName;
+    }, {});
+
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["products"],
         queryFn: () => instance.get(`/products`),
@@ -72,7 +82,8 @@ const ProductsManagementPage = () => {
             key: "category",
             title: "Danh mục",
             dataIndex: "category", 
-            ellipsis: true, 
+            ellipsis: true,
+            render: (categoryId: number | string) => categoriesData ? categoriesData[categoryId] : 'Unknown',
         },
         {
             key: "price",

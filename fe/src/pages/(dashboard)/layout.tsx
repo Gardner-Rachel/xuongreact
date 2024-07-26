@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import {
+    DatabaseOutlined,
     DesktopOutlined,
     FileOutlined,
     PieChartOutlined,
+    TagsOutlined,
     TeamOutlined,
     UploadOutlined,
     UserOutlined,
@@ -34,7 +36,11 @@ const items: MenuItem[] = [
     getItem(<NavLink to="/admin">Thống kê</NavLink>, "1", <PieChartOutlined />),
     getItem("Sản phẩm", "sub1", <DesktopOutlined />, [
         getItem(<NavLink to="/admin/products">Danh sách</NavLink>, "2-1"),
-        getItem(<NavLink to="/admin/products/add">Thêm</NavLink>, "2-2"),
+        getItem(<NavLink to="/admin/products/add">Thêm sản phẩm</NavLink>, "2-2"),
+    ]),
+    getItem("Danh mục", "sub2", <TagsOutlined />, [
+        getItem(<NavLink to="/admin/categories">Danh sách</NavLink>, "3-1"),
+        getItem(<NavLink to="/admin/categories/add">Thêm danh mục</NavLink>, "3-2"),
     ]),
 ];
 
