@@ -2,7 +2,7 @@ import { IUser } from "@/common/types/user";
 import instance from "@/configs/axios";
 import { PlusCircleFilled } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, message, Popconfirm, Skeleton, Table } from "antd";
+import { Button, Image, message, Popconfirm, Skeleton, Table } from "antd";
 import { Loader2Icon } from "lucide-react";
 import React from "react";
 import { render } from "react-dom";
@@ -47,7 +47,6 @@ const UserAdminPage = () => {
     },
   });
 
-  console.log(mutate);
 
   const columns = [
     {
@@ -75,7 +74,20 @@ const UserAdminPage = () => {
       key: "avatar",
       title: "Avatar",
       dataIndex: "avatar",
-      ellipsis: true,
+      // ellipsis: true,
+      render: (avatars: string[]) => (
+        <Image.PreviewGroup>
+          {avatars.map((avatar, index) => (
+            <Image
+              key={index}
+              src={avatar}
+              alt={`avatar-${index}`}
+              width={190}
+              height={120}
+            />
+          ))}
+        </Image.PreviewGroup>
+      ),
     },
     {
       key: "action",
@@ -118,20 +130,20 @@ const UserAdminPage = () => {
 
   return (
     <div>
-      {contextHolder}
-      <div className="flex items-center justify-between mb-5">
-        <h1 className="text-2xl font-semibold">Quản lý tài khoản</h1>
-        <Button type="primary">
-          <Link to={`/admin/users/add`}>
-            <PlusCircleFilled /> Thêm tài khoản
-          </Link>
-        </Button>
-      </div>
-      <Skeleton loading={isLoading} active>
-        <Table dataSource={dataSource} columns={columns}></Table>
-      </Skeleton>
+        {contextHolder}
+        <div className='flex items-center justify-between mb-5 '>
+            <h1 className='text-2xl font-semibold'>Quản lý tài khoản</h1>
+            <Button type='primary'>
+                <Link to={`/admin/users/add`}>
+                    <PlusCircleFilled /> Đăng ký
+                </Link>
+            </Button>
+        </div>
+            <Skeleton loading={isLoading} active>
+                <Table dataSource={dataSource} columns={columns} />
+            </Skeleton>
     </div>
-  );
-};
+)   
+}
 
 export default UserAdminPage;

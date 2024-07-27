@@ -1,16 +1,16 @@
 import instance from '@/configs/axios';
-import { BackwardFilled, Loading3QuartersOutlined } from '@ant-design/icons';
+import { BackwardFilled, Loading3QuartersOutlined, PlusOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button, Checkbox, Form, FormProps, Input, InputNumber, message, Select } from 'antd';
+import { Button, Checkbox, Form, FormProps, GetProp, Image, Input, InputNumber, message, Select, Upload, UploadFile, UploadProps } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 
 type FieldType = {
     name: string;
     category: string;
     price: number;
-    image?: string;
+    image: string[];
     gallery?: string[];
     description?: string;
     discount?: number;
@@ -20,11 +20,45 @@ type FieldType = {
     attributes?: string[];
 };
 
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
 const ProductAddPage = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
 
-    const { data: categories, isLoading } = useQuery({
+
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState("");
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+    const getBase64 = (file: FileType): Promise<string> =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
+        });
+
+    const handlePreview = async (file: UploadFile) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj as FileType);
+        }
+        setPreviewImage(file.url || (file.preview as string));
+        setPreviewOpen(true);
+    };
+
+    const uploadButton = (
+        <button style={{ border: 0, background: "none" }} type="button">
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </button>
+    );
+
+    const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+        setFileList(newFileList);
+    };
+
+    const { data: categories } = useQuery({
         queryKey: ["categories"],
         queryFn: () => instance.get(`/categories`),
     });
@@ -54,8 +88,11 @@ const ProductAddPage = () => {
     });
 
     const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-        console.log('Success:', values);
-        mutate(values);
+        const imageUrls = fileList
+            .filter((file) => file.status === "done") // Lọc chỉ các ảnh đã tải lên thành công
+            .map((file) => file.response?.secure_url); // Lấy URL từ phản hồi
+
+        mutate({ ...values, image: imageUrls });
     };
 
     return (
@@ -105,14 +142,43 @@ const ProductAddPage = () => {
                     <Form.Item<FieldType>
                         label="Giá sản phẩm"
                         name="price"
-                        rules={[{ required: true, message: 'Giá sản phẩm bắt buộc phải có!' }]}
+                        rules={[
+                            { required: true, message: 'Giá sản phẩm bắt buộc phải nhập!' },
+                            { type: "number", min: 0, message: 'Giá sản phẩm phải lớn hơn 0'},
+                        ]}
+                        
                     >
-                        <InputNumber disabled={isPending} />
+                        <InputNumber disabled={isPending} addonAfter="Vnd" />
                     </Form.Item>
 
-                    <Form.Item<FieldType> label="Ảnh sản phẩm" name="image">
-                        <Input />
+                    <Form.Item<FieldType> label="Ảnh sản phẩm" name="image" rules={[{ required: true, message: 'Ảnh sản phẩm không được để trống' }]}>
+                        <Upload
+                            action="https://api.cloudinary.com/v1_1/ecommercer2021/image/upload"
+                            data={{ upload_preset: "demo-upload" }}
+                            listType="picture-card"
+                            fileList={fileList}
+                            onPreview={handlePreview}
+                            onChange={handleChange}
+                            multiple
+                        >
+                            {fileList.length >= 8 ? null : uploadButton}
+                        </Upload>
+                        {previewImage && (
+                            <Image
+                                wrapperStyle={{ display: "none" }}
+                                preview={{
+                                    visible: previewOpen,
+                                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                                    afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                                }}
+                                src={previewImage}
+                            />
+                        )}
                     </Form.Item>
+
+                    {/* <Form.Item<FieldType> label="Ảnh sản phẩm" name="image">
+                        <Input />
+                    </Form.Item> */}
 
                     <Form.Item<FieldType> label=" Gallery ảnh" name="gallery">
                         <Input/>

@@ -1,8 +1,9 @@
 import instance from '@/configs/axios';
-import { BackwardFilled, Loading3QuartersOutlined } from '@ant-design/icons';
+import { BackwardFilled, Loading3QuartersOutlined, PlusOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { Button, Form, FormProps, Input, message } from 'antd';
-import React from 'react'
+import { Button, Form, FormProps, GetProp, Image, Input, message, Upload, UploadFile, UploadProps } from 'antd';
+import { reject } from 'lodash';
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 
 
@@ -11,12 +12,47 @@ type FieldType = {
     password: string;
     confirmPassword: string;
     name: string;
-    avatar?: string;
+    avatar?: string[];
 }
+
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload" >>[0];
 
 const UserAddAdminPage = () => {
     const [form] = Form.useForm();
     const [ messageApi, contextHolder ] = message.useMessage();
+
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState("");
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+    const getBase64 = (file: FileType): Promise<string> => 
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
+        });
+    
+    const handlePreview = async (file: UploadFile) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj as FileType);
+        }
+        setPreviewImage(file.url || (file.preview as string));
+        setPreviewOpen(true);
+    }
+
+    const uploadButton = (
+        <button style={{ border: 0, background: "none" }} type='button'>
+            <PlusOutlined />
+            <div style={{margin: 8}}>Upload</div>
+        </button>
+    )
+
+    const handleChange: UploadProps["onChange"] = ({fileList: newFileList}) => {
+        setFileList(newFileList);
+    }
+
+    
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (register: FieldType) => {
@@ -42,8 +78,10 @@ const UserAddAdminPage = () => {
     });
 
     const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-        console.log('Success:', values);
-        mutate(values);
+        const imageUrls = fileList
+            .filter((file) => file.status === "done")
+            .map((file) => file.response?.secure_url);
+        mutate({ ...values, avatar: imageUrls})
     };
 
   return (
@@ -99,12 +137,35 @@ const UserAddAdminPage = () => {
             >
                 <Input disabled={isPending} />
             </Form.Item>
-            
-         
 
-            <Form.Item<FieldType> label="Avatar" name="avatar" >
-                <Input disabled={isPending} />
+            <Form.Item<FieldType> label="Avatar" name="avatar">
+                <Upload 
+                    action="https://api.cloudinary.com/v1_1/ecommercer2021/image/upload"
+                    data={{upload_preset: "demo-upload"}}
+                    listType='picture-card'
+                    fileList={fileList}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
+                    multiple
+                >
+                    {fileList.length >= 8 ? null : uploadButton}
+                </Upload>
+                {previewImage && (
+                    <Image
+                        wrapperStyle={{display: "none"}}
+                        preview={{
+                            visible: previewOpen,
+                            onVisibleChange: (visible) => setPreviewOpen(visible),
+                            afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                        }} 
+                        src={previewImage}
+                    />
+                )}
             </Form.Item>
+                
+            {/* <Form.Item<FieldType> label="Avatar" name="avatar" >
+                <Input disabled={isPending} />
+            </Form.Item> */}
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button type="primary" htmlType="submit" disabled={isPending}>

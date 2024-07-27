@@ -26,8 +26,9 @@
             "any.required": "Trường Confirm Password là bắt buộc",
             "any.only": "Mật khẩu không trùng khớp",
         }),
-        avatar: Joi.string().uri().messages({
-            "string.uri": "Trường Avatar phải là đường dẫn hợp lệ",
+        avatar: Joi.array().items(Joi.string().uri()).default([]).messages({
+            "array.items": "Trường Avatar phải là mảng các đường dẫn hợp lệ",
+            "array.base": "Trường Avatar phải là một mảng",
         }),
     });
 

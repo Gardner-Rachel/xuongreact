@@ -23,7 +23,7 @@ const userSchema = new Schema(
             default: "user",
         },
         avatar: {
-            type: String,
+            type: [String],
             default: "../upload/default-avatar.jpeg",
         },
     },
