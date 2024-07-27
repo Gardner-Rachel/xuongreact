@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Button, Form, FormProps, Input, message } from 'antd';
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import '../../../../styles/register.css'
 
 
 type FieldType = {
@@ -56,12 +57,12 @@ const Login = () => {
     };
 
   return (
-    <div>
+    <div className='register-container'>
         {contextHolder}
-    <div className='flex items-center justify-between mb-5 '>
-        <h1 className='text-2xl font-semibold'>Register</h1>
+    <div className='register-title'>
+        Login
     </div>
-    <div className='max-w-4xl mx-auto'>
+    <div className='register-form'>
         <Form
             form={form}
             name="basic"

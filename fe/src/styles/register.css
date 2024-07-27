@@ -1,0 +1,56 @@
+
+.register-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    /* background: url('https://png.pngtree.com/thumb_back/fh260/background/20211111/pngtree-information-data-dark-blue-simple-wave-technology-background-image_915550.png') no-repeat center center fixed;
+    background-size: cover; */
+    margin: 20px 0;
+  }
+  
+
+  .register-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .register-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+ 
+  .upload-button {
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .upload-button .anticon {
+    font-size: 24px;
+    color: #1890ff;
+  }
+  
+  .upload-button div {
+    margin-left: 8px;
+    font-size: 14px;
+  }
+  
+
+  .preview-image {
+    display: none;
+  }
+  
+  .preview-image img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  

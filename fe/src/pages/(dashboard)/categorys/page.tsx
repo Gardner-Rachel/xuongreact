@@ -53,6 +53,13 @@ const CategoryManagementPage = () => {
             })
         },
     })
+
+    const createFilters = (categorys: ICategory[]) => {
+        return categorys
+            .map((category: ICategory) => category.name)
+            .filter((value: string, index: number, self: string[]) => self.indexOf(value) === index)
+            .map((name: string) => ({ text: name, value: name }));
+    };
    
 
     const columns = [
@@ -61,11 +68,15 @@ const CategoryManagementPage = () => {
             title: "ID",
             dataIndex: "_id",
         },
-        
         {
             key: "name",
             title: "Tên danh mục",
             dataIndex: "name",
+            filterSearch: true,
+            filters: data ? createFilters(data?.data) : [],
+            sorter: (a: ICategory, b: ICategory) => a.name.localeCompare(b.name),
+            onFilter: (value: string , category: ICategory) => category.name.includes(value),
+            sortDirections : ["ascend", "descend"],
         },
         {
             key: "action",
