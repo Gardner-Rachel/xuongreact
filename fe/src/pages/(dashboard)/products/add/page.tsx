@@ -130,12 +130,6 @@ const ProductAddPage = () => {
                                 value: category._id,
                                 label: category.name,
                             }))}
-                            // options={[
-                            //     { value: 'jack', label: 'Jack' },
-                            //     { value: 'lucy', label: 'Lucy' },
-                            //     { value: 'Yiminghe', label: 'yiminghe' },
-                            //     { value: 'disabled', label: 'Disabled', disabled: true },
-                            // ]}
                         />
                     </Form.Item>
 
@@ -175,10 +169,6 @@ const ProductAddPage = () => {
                             />
                         )}
                     </Form.Item>
-
-                    {/* <Form.Item<FieldType> label="Ảnh sản phẩm" name="image">
-                        <Input />
-                    </Form.Item> */}
 
                     <Form.Item<FieldType> label=" Gallery ảnh" name="gallery">
                         <Input/>

@@ -1,16 +1,17 @@
-import Footer from '@/components/Footer'
-import Headers from '@/components/Header'
-import Header from '@/components/Header'
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import '../../styles/style.css'
+import Header from './_components/Header'
+import Footer from './_components/Footer'
+
 
 const Layout = () => {
   return (
     <div className="layout-container">
-        <Headers />
+        <Header />
         <Outlet />
         <Footer />
+      
     </div>
   )
 }
