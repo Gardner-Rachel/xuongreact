@@ -15,20 +15,31 @@ export const create = async (req, res) => {
     }
 };
 
+// export const getAllProducts = async (req, res) => {
+//     try {
+//         const products = await Product.find({});
+//         if (products.length === 0) {
+//             return res.status(StatusCodes.OK).json({ message: "Không có sản phẩm nào!" });
+//         }
+//         return res.status(StatusCodes.OK).json(products);
+//     } catch (error) {
+//         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+//     }
+// };
 export const getAllProducts = async (req, res) => {
     const { _page = 1, _limit = 10, _sort = "createdAt", _order = "asc", _expand } = req.query;
     const options = {
-        page: _page,
-        limit: _limit,
+        page: parseInt(_page, 10),
+        limit: parseInt(_limit, 10),
         sort: { [_sort]: _order === "desc" ? -1 : 1 },
     };
     const populateOptions = _expand ? [{ path: "category", select: "name" }] : [];
     try {
         const result = await Product.paginate(
-            { categoryId: null },
+            {},
             { ...options, populate: populateOptions }
         );
-        if (result.docs.length === 0) return res.status(200).json({ data: [] });
+        if (result.docs.length === 0) return res.status(200).json({ data: [], pagination: result });
         const response = {
             data: result.docs,
             pagination: {

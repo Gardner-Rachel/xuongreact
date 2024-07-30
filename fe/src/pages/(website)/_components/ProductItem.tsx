@@ -15,7 +15,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
                     <div className="relative group w-full lg:h-[240px] mb:h-[160px] bg-[#F4F4F4] rounded-xl grid place-items-center">
                         <img
                             className="lg:w-[164px] mb:w-[120px] lg:h-[164px] mb:h-[120px]"
-                            src="../Images/product_5.png"
+                            src={product.image}
                             alt=""
                         />
                         <button className="absolute scale-0 group-hover:scale-100 group-hover:translate-y-0 -translate-y-[200%] duration-200 z-[2] lg:w-[152px] mb:w-[136px] lg:h-[64px]  mb:h-[48px] rounded-[100px] border-none bg-[#1A1E2630] text-sm text-white backdrop-blur-md">

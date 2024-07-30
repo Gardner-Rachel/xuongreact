@@ -138,7 +138,7 @@ const UserAddAdminPage = () => {
                 <Input disabled={isPending} />
             </Form.Item>
 
-            <Form.Item<FieldType> label="Avatar" name="avatar">
+            <Form.Item<FieldType> label="Avatar" name="avatar" >
                 <Upload 
                     action="https://api.cloudinary.com/v1_1/ecommercer2021/image/upload"
                     data={{upload_preset: "demo-upload"}}

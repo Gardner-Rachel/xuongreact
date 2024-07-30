@@ -103,8 +103,9 @@ const ShopPage = (props: Props) => {
                                 ))}
                             </Swiper>
                         </div>
+                        
                         {/* render products */}
-                        <ProductList products={products?.data?.data} />
+                        {/* <ProductList products={products?.data?.data} /> */}
                         {/* contentratest */}
                         <div className="lg:w-full mb:w-full lg:rounded-3xl lg:my-8 mb:my-2 lg:h-[460px] mb:h-[671px] bg-gradient-to-r from-[#05422C] lg:pl-[56px] lg:pr-[88px] to-[#648A7C] mb:py-6 flex lg:flex-row mb:flex-col items-center justify-between">
                             {/* left */}
@@ -161,7 +162,7 @@ const ShopPage = (props: Props) => {
                             {/* right */}
                             <div className="relative lg:w-[373px] mb:w-[342px] h-[344px] flex flex-col items-center justify-between">
                                 <div className="w-full h-[322px] bg-[#ffffff12] grid place-items-center rounded-2xl">
-                                    <img src="../Images/img_product.png" alt />
+                                    <img src="../Images/img_product.png"  />
                                 </div>
                                 {/* *****  */}
                                 <div className="*:relative flex *:w-1.5 *:h-1.5 *:rounded-[50%] gap-x-2 *:after:content-[''] *:after:absolute *:after:-top-1/2 *:after:-left-1/2 *:after:rounded-[50%] *:after:bg-[#ffffff20]">
@@ -263,6 +264,7 @@ const ShopPage = (props: Props) => {
                 </div>
             </div>
         </>
+        
     );
 };
 

@@ -1,12 +1,85 @@
-import React from "react";
+import { BellOutlined, LogoutOutlined, SearchOutlined, UserOutlined } from "@ant-design/icons";
+import { Avatar, Dropdown, Input, Layout, Menu, MenuProps } from "antd";
+import React, { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import "../../../styles/header.css";
 
 
-type Props = {};
+const { Header } = Layout;
+type MenuItem = Required<MenuProps>["items"][number];
 
-const Account = (props: Props) => {
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[]
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+  } as MenuItem;
+}
+
+const Account = () => {
+    const [isLogin, setIsLogin] = useState(false);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Kiểm tra trạng thái đăng nhập
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    if (token && user) {
+      setIsLogin(true);
+      // Kiểm tra nếu user.avatar là một mảng và có phần tử đầu tiên
+      setAvatar(
+        user.avatar && Array.isArray(user.avatar) ? user.avatar[0] : null
+      );
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLogin(false);
+    setAvatar(null);
+    navigate("/");
+  };
+
+  const userMenu: MenuProps = {
+    items: [
+      {
+        key: "logout",
+        label: (
+          <span onClick={handleLogout}>
+            <LogoutOutlined style={{ marginRight: '8px' }} />
+            Đăng xuất
+          </span>
+        ),
+      },
+    ],
+  };
+
+  const menuItems: MenuProps["items"] = isLogin ? [
+        // getItem("", "1", <BellOutlined />),
+        getItem(
+          <Dropdown menu={userMenu} trigger={["click"]}>
+          {avatar ? <Avatar src={avatar} /> : <UserOutlined />}
+        </Dropdown>,
+        "4"
+        ),
+      ] : [
+        // getItem("", "1", <BellOutlined />),
+        getItem(<NavLink to="/register">Register</NavLink>, "2"),
+        getItem(<NavLink to="/login">Login</NavLink>, "3"),
+        // getItem("", "4", <UserOutlined />),
+      ];
     return (
         <>
-            <span className="text-sm">Your Account</span>|
+            {/* <span className="text-sm">Your Account</span>| */}
             <button className="h-[24px]">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -23,10 +96,16 @@ const Account = (props: Props) => {
                     />
                 </svg>
                 <span className="absolute bg-red-500 top-2 rounded-[50%] w-[16px] h-[16px] text-xs text-white">
-                    1
+                    0
                 </span>
+                
             </button>
+            <Menu mode="horizontal" className="menu" items={menuItems} />
         </>
+        
+        
+        
+      
     );
 };
 

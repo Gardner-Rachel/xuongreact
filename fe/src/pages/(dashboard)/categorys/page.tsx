@@ -28,6 +28,7 @@ const CategoryManagementPage = () => {
         key: category._id,
         ...category,
     }));
+    
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (_id: number | string) => {

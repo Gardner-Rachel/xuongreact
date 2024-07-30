@@ -145,7 +145,7 @@ const ProductAddPage = () => {
                         <InputNumber disabled={isPending} addonAfter="Vnd" />
                     </Form.Item>
 
-                    <Form.Item<FieldType> label="Ảnh sản phẩm" name="image" rules={[{ required: true, message: 'Ảnh sản phẩm không được để trống' }]}>
+                    <Form.Item<FieldType> label="Ảnh sản phẩm" name="image">
                         <Upload
                             action="https://api.cloudinary.com/v1_1/ecommercer2021/image/upload"
                             data={{ upload_preset: "demo-upload" }}

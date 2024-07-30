@@ -1,14 +1,15 @@
+import useCart from "@/common/hooks/useCart";
 import { Button, InputNumber, message, Table } from "antd";
-import useCart from "@/common/hooks/useCart"; // Đảm bảo đường dẫn đến hook useCart đúng
+// Đảm bảo đường dẫn đến hook useCart đúng
 
 const CartPage = () => {
     const userId = "yourUserId"; // Thay thế bằng ID người dùng thực tế
     const { cart, isLoading, error, updateQuantity, removeItem } = useCart(userId);
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
+    // if (isLoading) return <div>Loading...</div>;
+    // if (error) return <div>Error: {error.message}</div>;
 
-    const handleQuantityChange = (productId, value) => {
+    const handleQuantityChange = (productId: string, value: number | null) => {
         if (!value || value < 1) {
             message.error("Invalid quantity");
             return;
@@ -19,7 +20,7 @@ const CartPage = () => {
                 onSuccess: () => {
                     message.success("Quantity updated successfully");
                 },
-                onError: (err) => {
+                onError: (err: any) => {
                     message.error(`Error updating quantity: ${err.message}`);
                 },
             }

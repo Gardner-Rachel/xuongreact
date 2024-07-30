@@ -12,8 +12,11 @@ import ProductsManagementPage from "@/pages/(dashboard)/products/page";
 import NotFoundPage from "@/pages/(website)/404/page";
 import Login from "@/pages/(website)/auth/login/pages";
 import Register from "@/pages/(website)/auth/register/pages";
+import CartPage from "@/pages/(website)/cart/page";
 import HomePage from "@/pages/(website)/home/page";
 import LayoutWebsite from "@/pages/(website)/layout";
+import ProductDetailPage from "@/pages/(website)/products/[id]/page";
+import ShopPage from "@/pages/(website)/products/page";
 import { Route, Routes } from "react-router-dom";
 
 const Router = () => {
@@ -24,6 +27,9 @@ const Router = () => {
                     <Route index element={<HomePage />} />
                     <Route path="register" element={<Register />} />
                     <Route path="login" element={<Login />} />
+                    <Route path="products" element={<ShopPage />} />
+                    <Route path="products/:id" element={<ProductDetailPage />} />
+                    <Route path="cart" element={<CartPage />} />
                 </Route>
                 <Route path="admin" element={<LayoutAdmin />}>
                     <Route index element={<DashboardPage />} />
