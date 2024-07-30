@@ -1,6 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 import Cart from "../models/cart";
-
+import Product from "../models/product";
+const findProductInCart = (cart, productId) => {
+    return cart.products.find((item) => item.productId.toString() === productId);
+};
 // Lấy danh sách sản phẩm thuộc 1 user
 export const getCartByUserId = async (req, res) => {
     const { userId } = req.params;
@@ -21,29 +24,44 @@ export const getCartByUserId = async (req, res) => {
 export const addItemToCart = async (req, res) => {
     const { userId, productId, quantity } = req.body;
     try {
+        console.log("Received request to add item to cart", { userId, productId, quantity });
+
+        // Tìm sản phẩm từ cơ sở dữ liệu
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(StatusCodes.NOT_FOUND).json({ error: "Product not found" });
+        }
+
+        const price = product.price;
+        const finalPrice = price - (product.discount || 0);
+
         // kiểm tra giỏ hàng có tồn tại chưa? dựa theo UserId
         let cart = await Cart.findOne({ userId });
-        // nếu giỏ hàng không tồn tại thì chúng ta tạo mới
         if (!cart) {
+            console.log("No cart found, creating a new one");
             cart = new Cart({ userId, products: [] });
         }
+
         const existProductIndex = cart.products.findIndex(
             (item) => item.productId.toString() == productId
         );
 
-        // kiểm tra xem sản có tồn tại trong giỏ hàng không?
         if (existProductIndex !== -1) {
-            // nếu mà sản phẩm tồn tại trong giỏ hàng thì chúng ta cập nhật số lượng
+            console.log("Product exists in cart, updating quantity");
             cart.products[existProductIndex].quantity += quantity;
+            cart.products[existProductIndex].price = price;
+            cart.products[existProductIndex].finalPrice = finalPrice;
         } else {
-            // nếu sản phẩm chưa có trong giỏ hàng thì chúng ta thêm mới
-            cart.products.push({ productId, quantity });
+            console.log("Product does not exist in cart, adding new product");
+            cart.products.push({ productId, quantity, price, discount: product.discount || 0, finalPrice });
         }
+
         await cart.save();
+        console.log("Cart saved successfully", cart);
         return res.status(StatusCodes.OK).json({ cart });
     } catch (error) {
-        // trả về client lỗi
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Internal Server Error" });
+        console.error("Error adding item to cart:", error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error" });
     }
 };
 // Xóa sản phẩm trong giỏ hàng thuộc 1 user
@@ -58,7 +76,6 @@ export const removeFromCart = async (req, res) => {
         cart.products = cart.products.filter(
             (product) => product.productId && product.productId.toString() !== productId
         );
-
         await cart.save();
         return res.status(StatusCodes.OK).json({ cart });
     } catch (error) {
@@ -74,15 +91,20 @@ export const updateProductQuantity = async (req, res) => {
             return res.status(StatusCodes.NOT_FOUND).json({ error: "Cart not found" });
         }
 
-        const product = cart.products.find((item) => item.productId.toString() === productId);
+        const product = findProductInCart(cart, productId);
         if (!product) {
             return res.status(StatusCodes.NOT_FOUND).json({ error: "Product not found" });
         }
         product.quantity = quantity;
+
+        // Tự động cập nhật tổng số lượng và giá
         await cart.save();
         return res.status(StatusCodes.OK).json({ cart });
-    } catch (error) {}
+    } catch (error) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Internal Server Error" });
+    }
 };
+
 // Tăng số lượng của sản phẩm trong giỏ hàng
 export const increaseProductQuantity = async (req, res) => {
     const { userId, productId } = req.body;
@@ -124,7 +146,6 @@ export const decreaseProductQuantity = async (req, res) => {
         if (product.quantity > 1) {
             product.quantity--;
         }
-
         await cart.save();
         res.status(200).json(cart);
     } catch (error) {

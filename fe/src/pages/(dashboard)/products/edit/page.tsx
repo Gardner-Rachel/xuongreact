@@ -29,14 +29,14 @@ type FieldType = {
   name: string;
   category: string;
   price: number;
-  image: string[];
-  gallery?: string[];
+  image?: string[];
+  // gallery?: string[];
   description?: string;
   discount?: number;
   countInStock?: number;
   featured?: boolean;
-  tags?: string[];
-  attributes?: string[];
+  // tags?: string[];
+  // attributes?: string[];
 };
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -155,114 +155,143 @@ const ProductEditPage = () => {
           </Link>
         </Button>
       </div>
-      <div className="max-w-4xl mx-auto">
-        <Skeleton loading={isLoading}>
-          <Form
-            name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
-            onFinish={onFinish}
-            autoComplete="off"
-            initialValues={data?.data}
-          >
-            <Form.Item<FieldType>
-              label="Tên sản phẩm"
-              name="name"
-              rules={[
-                { required: true, message: "Tên sản phẩm bắt buộc phải nhập!" },
-              ]}
-            >
-              <Input disabled={isPending} />
-            </Form.Item>
-            <Form.Item<FieldType> label="Danh mục" name="category">
-              <Select
-                options={categories?.data?.map(
-                  (category: { _id: number | string; name: string }) => ({
-                    value: category._id,
-                    label: category.name,
-                  })
-                )}
-              />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="Giá sản phẩm"
-              name="price"
-              rules={[
-                { required: true, message: "Giá sản phẩm bắt buộc phải nhập!" },
-                {
-                  type: "number",
-                  min: 0,
-                  message: "Giá sản phẩm phải lớn hơn 0",
-                },
-              ]}
-            >
-              <InputNumber disabled={isPending} addonAfter="Vnd" />
-            </Form.Item>
 
-            <Form.Item<FieldType> label="Ảnh sản phẩm" name="image" rules={[{ required: true, message:'Ảnh sản phẩm được để trống'}]}>
-              <Upload
-                action="https://api.cloudinary.com/v1_1/ecommercer2021/image/upload"
-                data={{ upload_preset: "demo-upload" }}
-                listType="picture-card"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-                multiple
+      <Skeleton loading={isLoading}>
+        <Form name="basic" layout="vertical" onFinish={onFinish} autoComplete="off" initialValues={data?.data}>
+          <div className="grid grid-cols-[auto,300px] gap-8">
+            <div>
+              <Form.Item<FieldType>
+                label="Tên sản phẩm"
+                name="name"
+                rules={[
+                  { required: true, message: "Tên sản phẩm bắt buộc phải có!" },
+                ]}
               >
-                {fileList.length >= 8 ? null : uploadButton}
-              </Upload>
-              <Image
-                wrapperStyle={{ display: "none" }}
-                preview={{
-                  visible: previewOpen,
-                  onVisibleChange: (visible) => setPreviewOpen(visible),
-                  afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                }}
-                src={previewImage}
-              />
-            </Form.Item>
+                <Input disabled={isPending} />
+              </Form.Item>
 
-            <Form.Item<FieldType> label="Gallery ảnh" name="gallery">
-              <Input />
-            </Form.Item>
+              <Form.Item<FieldType>
+                label="Giá sản phẩm"
+                name="price"
+                rules={[
+                  {
+                    required: true,
+                    message: "Giá sản phẩm bắt buộc phải nhập!",
+                  },
+                  {
+                    type: "number",
+                    min: 0,
+                    message: "Giá sản phẩm phải lớn hơn 0",
+                  },
+                ]}
+              >
+                <InputNumber disabled={isPending} addonAfter="Vnd" />
+              </Form.Item>
 
-            <Form.Item<FieldType> label="Mô tả sản phẩm" name="description">
-              <TextArea rows={4} />
-            </Form.Item>
-            <Form.Item<FieldType> label="Giá khuyến mại" name="discount">
-              <InputNumber />
-            </Form.Item>
-            <Form.Item<FieldType> label="Số lượng sản phẩm" name="countInStock">
-              <InputNumber />
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="Sản phẩm nổi bật"
-              name="featured"
-              valuePropName="checked"
-            >
-              <Checkbox />
-            </Form.Item>
-            <Form.Item<FieldType> label="Tags" name="tags">
-              <Input />
-            </Form.Item>
-            <Form.Item<FieldType> label="Thuộc tính" name="attributes">
-              <Input />
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                {isPending ? (
-                  <>
-                    <Loading3QuartersOutlined className="animate-spin" /> Submit
-                  </>
-                ) : (
-                  "Submit"
+              <Form.Item<FieldType>
+                label="Giá khuyến mãi"
+                name="discount"
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || value < getFieldValue("price")) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("Giá khuyến mãi phải nhỏ hơn giá sản phẩm!")
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <InputNumber addonAfter="Vnd" />
+              </Form.Item>
+
+              <Form.Item<FieldType> label="Ảnh sản phẩm" name="image">
+                <Upload
+                  action="https://api.cloudinary.com/v1_1/ecommercer2021/image/upload"
+                  data={{ upload_preset: "demo-upload" }}
+                  listType="picture-card"
+                  fileList={fileList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                  multiple
+                >
+                  {fileList.length >= 8 ? null : uploadButton}
+                </Upload>
+                {previewImage && (
+                  <Image
+                    wrapperStyle={{ display: "none" }}
+                    preview={{
+                      visible: previewOpen,
+                      onVisibleChange: (visible) => setPreviewOpen(visible),
+                      afterOpenChange: (visible) =>
+                        !visible && setPreviewImage(""),
+                    }}
+                    src={previewImage}
+                  />
                 )}
-              </Button>
-            </Form.Item>
-          </Form>
-        </Skeleton>
-      </div>
+              </Form.Item>
+
+              <Form.Item<FieldType> label="Mô tả sản phẩm" name="description">
+                <TextArea rows={7} disabled={isPending} />
+              </Form.Item>
+
+              <Form.Item<FieldType> name="featured" valuePropName="checked">
+                            <Checkbox>Sản phẩm nổi bật</Checkbox>
+              </Form.Item>
+
+              <Form.Item<FieldType>
+                label="Sản phẩm trong kho"
+                name="countInStock"
+                rules={[
+                  {
+                    type: "number",
+                    min: 0,
+                    message: "Số lượng sản phẩm phải lớn hơn 0",
+                  },
+                ]}
+              >
+                <InputNumber defaultValue={0} />
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button type="primary" htmlType="submit">
+                  {isPending ? (
+                    <>
+                      <Loading3QuartersOutlined className="animate-spin" />{" "}
+                      Submit
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
+                </Button>
+              </Form.Item>
+            </div>
+            <div>
+              <Form.Item
+                label="Danh mục sản phẩm"
+                name="category"
+                className="text-2xl"
+              >
+                <Checkbox.Group>
+                  <div style={{ display: "flex", flexWrap: "wrap" }}>
+                    {categories?.data.map((category: any) => (
+                      <Checkbox
+                        key={category._id}
+                        value={category._id}
+                        style={{ marginRight: "16px", marginBottom: "8px" }}
+                      >
+                        {category.name}
+                      </Checkbox>
+                    ))}
+                  </div>
+                </Checkbox.Group>
+              </Form.Item>
+            </div>
+          </div>
+        </Form>
+      </Skeleton>
     </div>
   );
 };

@@ -1,13 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 import Product from "../models/product";
-import slugify from "slugify";
 
 export const create = async (req, res) => {
     try {
-        const product = await Product.create({
-            ...req.body,
-            slug: slugify(req.body.name, "-"),
-        });
+        const product = await Product.create(req.body);
 
         return res.status(StatusCodes.CREATED).json(product);
     } catch (error) {
@@ -15,31 +11,20 @@ export const create = async (req, res) => {
     }
 };
 
-// export const getAllProducts = async (req, res) => {
-//     try {
-//         const products = await Product.find({});
-//         if (products.length === 0) {
-//             return res.status(StatusCodes.OK).json({ message: "Không có sản phẩm nào!" });
-//         }
-//         return res.status(StatusCodes.OK).json(products);
-//     } catch (error) {
-//         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
-//     }
-// };
 export const getAllProducts = async (req, res) => {
     const { _page = 1, _limit = 10, _sort = "createdAt", _order = "asc", _expand } = req.query;
     const options = {
-        page: parseInt(_page, 10),
-        limit: parseInt(_limit, 10),
+        page: _page,
+        limit: _limit,
         sort: { [_sort]: _order === "desc" ? -1 : 1 },
     };
     const populateOptions = _expand ? [{ path: "category", select: "name" }] : [];
     try {
         const result = await Product.paginate(
-            {},
+            { categoryId: null },
             { ...options, populate: populateOptions }
         );
-        if (result.docs.length === 0) return res.status(200).json({ data: [], pagination: result });
+        if (result.docs.length === 0) return res.status(StatusCodes.OK).json({ data: [] });
         const response = {
             data: result.docs,
             pagination: {
@@ -48,9 +33,9 @@ export const getAllProducts = async (req, res) => {
                 totalItems: result.totalDocs,
             },
         };
-        return res.status(200).json(response);
+        return res.status(StatusCodes.OK).json(response);
     } catch (error) {
-        return res.status(400).json({ message: error.message });
+        return res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
     }
 };
 
@@ -92,6 +77,3 @@ export const related = async (req, res) => {
         return res.status(StatusCodes.OK).json(product);
     } catch (error) {}
 };
-
-// iphone 13 product max => /product/iphone-13-product-max
-// GET /product/:slug

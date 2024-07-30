@@ -1,3 +1,4 @@
+import { ICategory } from "@/common/types/category";
 import { IProduct } from "@/common/types/product";
 import instance from "@/configs/axios";
 import { PlusCircleFilled } from "@ant-design/icons";
@@ -73,9 +74,19 @@ const ProductsManagementPage = () => {
     },
   });
 
-  const createFilters = (products: IProduct[]) => {
+  const createProductFilters = (products: IProduct[]) => {
     return products
       .map((product: IProduct) => product.name)
+      .filter(
+        (value: string, index: number, self: string[]) =>
+          self.indexOf(value) === index
+      )
+      .map((name: string) => ({ text: name, value: name }));
+  };
+
+  const createCategoryFilters = (categories: ICategory[]) => {
+    return categories
+      .map((category: ICategory) => category.name)
       .filter(
         (value: string, index: number, self: string[]) =>
           self.indexOf(value) === index
@@ -90,7 +101,7 @@ const ProductsManagementPage = () => {
       dataIndex: "name",
       ellipsis: true,
       filterSearch: true,
-      filters: data ? createFilters(data?.data?.data) : [],
+      filters: data ? createProductFilters(data?.data?.data) : [],
       sorter: (a: IProduct, b: IProduct) => a.name.localeCompare(b.name),
       onFilter: (value: string, product: IProduct) =>
         product.name.includes(value),
@@ -101,13 +112,18 @@ const ProductsManagementPage = () => {
       title: "Danh mục",
       dataIndex: "category",
       ellipsis: true,
-      render: (categoryId: number | string) =>
-        categoriesData ? categoriesData[categoryId] : "Unknown",
-    },
-    {
-      key: "price",
-      title: "Giá sản phẩm",
-      dataIndex: "price",
+      filters: categories ? createCategoryFilters(categories?.data) : [],
+      render: (categoryIds: (number | string)[]) =>
+        categoryIds
+          .map((categoryId) =>
+            categoriesData ? categoriesData[categoryId] : "Unknown"
+          ).join(", "),
+      onFilter: (value: string, product: IProduct) => {
+        const productCategoryNames = product.category.map(
+          (categoryId) => categoriesData[categoryId] || "Unknown"
+        );
+        return productCategoryNames.includes(value);
+      },
     },
     {
       key: "image",
@@ -122,19 +138,27 @@ const ProductsManagementPage = () => {
       ),
     },
     {
+      key: "price",
+      title: "Giá sản phẩm",
+      dataIndex: "price",
+    },
+    {
       key: "discount",
       title: "Giá khuyến mãi",
       dataIndex: "discount",
     },
     {
-      key: "countInStock",
-      title: "Số lượng sản phẩm",
-      dataIndex: "countInStock",
+      key: "featured",
+      dataIndex: "featured",
+      title: "Nổi bật",
+      render: (_: any, product: IProduct) => (
+        <span>{product.featured ? "Có" : "không"}</span>
+      ),
     },
     {
-      key: "tags",
-      title: "Tags",
-      dataIndex: "tags",
+      key: "countInStock",
+      dataIndex: "countInStock",
+      title: "Tình trạng",
     },
     {
       key: "action",

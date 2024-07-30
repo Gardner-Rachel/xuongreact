@@ -13,7 +13,6 @@ const userSchema = new Schema(
         },
         name: {
             type: String,
-            required: true,
             minlength: 3,
             maxlength: 30,
         },
@@ -30,4 +29,4 @@ const userSchema = new Schema(
     { timestamps: true, versionKey: false }
 );
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model.User || mongoose.model("User", userSchema);

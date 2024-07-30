@@ -7,10 +7,10 @@ export const create = async (req, res) => {
         const categoy = await Category.create({
             name: req.body.name,
             slug: slugify(req.body.name, "-"),
-        }); 
+        });
+
         return res.status(StatusCodes.CREATED).json(categoy);
     } catch (error) {
-        console.log(error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
     }
 };
@@ -26,16 +26,17 @@ export const getAll = async (req, res) => {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
     }
 };
+
 export const getCategoryById = async (req, res) => {
-    // GET /categories/65fef32d75398a9a92b694da
-    // { name: "Danh mục 1", products: []}
     try {
-        const products = await Product.find({ category: req.params.id });
-        const category = await Category.findById(req.params.id);
-        if (category.length === 0)
-            return res
-                .status(StatusCodes.NOT_FOUND)
-                .json({ message: "Không tìm thấy sản phẩm nào!" });
+        const { id } = req.params; // Sử dụng destructuring để lấy id
+        const products = await Product.find({ category: id });
+        const category = await Category.findById(id);
+
+        if (!category) {
+            // Sửa điều kiện kiểm tra
+            return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy danh mục!" }); // Cập nhật thông điệp cho rõ ràng
+        }
         return res.status(StatusCodes.OK).json({
             category,
             products,
