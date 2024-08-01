@@ -3,10 +3,27 @@ import { StatusCodes } from "http-status-codes";
 
 export const createOrder = async (req, res) => {
     try {
-        const { userId, items, totalPrice, customerInfo } = req.body;
-        const order = await Order.create({ userId, items, totalPrice, customerInfo });
+        console.log('Request Body:', req.body);  
+        const { userId, items, totalPrice, customerName } = req.body;
+
+        if (!customerName) {
+            console.error("customerName is missing");
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: "customerName is required" });
+        }
+
+        console.log('Creating order with:', { userId, items, totalPrice, customerName }); 
+
+        const order = new Order({
+            userId,
+            items,
+            totalPrice,
+            customerName,
+        });
+
+        await order.save();
         return res.status(StatusCodes.CREATED).json(order);
     } catch (error) {
+        console.error('Error creating order:', error);  // Log the error
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };

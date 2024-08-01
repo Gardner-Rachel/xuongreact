@@ -18,6 +18,9 @@ import LayoutWebsite from "@/pages/(website)/layout";
 import ProductDetailPage from "@/pages/(website)/products/[id]/page";
 import ShopPage from "@/pages/(website)/products/page";
 import { Route, Routes } from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
+import OdersManagementPage from "@/pages/(dashboard)/oders/pages";
+import OrderDetailPage from "@/pages/(dashboard)/oders/[id]/page";
 
 const Router = () => {
     return (
@@ -31,7 +34,7 @@ const Router = () => {
                     <Route path="products/:id" element={<ProductDetailPage />} />
                     <Route path="cart" element={<CartPage />} />
                 </Route>
-                <Route path="admin" element={<LayoutAdmin />}>
+                <Route path="admin" element={<PrivateRoute requiredRole="admin"><LayoutAdmin /></PrivateRoute>}>
                     <Route index element={<DashboardPage />} />
                     <Route path="products" element={<ProductsManagementPage />} />
                     <Route path="products/add" element={<ProductAddPage/>} />
@@ -42,6 +45,8 @@ const Router = () => {
                     <Route path="users" element={<UserAdminPage />} />
                     <Route path="users/add" element={<UserAddAdminPage />} />
                     <Route path="users/:id/edit" element={<UserEditAdminPage />} />
+                    <Route path="orders" element={<OdersManagementPage />} />
+                    <Route path="orders/:userId/:orderId" element={<OrderDetailPage />} />
                 </Route>
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>

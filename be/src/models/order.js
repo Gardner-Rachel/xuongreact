@@ -57,11 +57,14 @@ const orderSchema = new mongoose.Schema({
         default: Date.now,
     },
 });
+
 // Tạo pre-save hook để sinh orderNumber trước khi lưu vào cơ sở dữ liệu
-orderSchema.pre("save", function (next) {
+orderSchema.pre("validate", function (next) {
     if (!this.orderNumber) {
         this.orderNumber = generateOrderNumber();
     }
     next();
 });
+
+
 export default mongoose.model.Order || mongoose.model("Order", orderSchema);

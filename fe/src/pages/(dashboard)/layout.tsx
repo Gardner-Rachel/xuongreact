@@ -4,6 +4,7 @@ import {
     DesktopOutlined,
     FileOutlined,
     PieChartOutlined,
+    ShoppingCartOutlined,
     TagsOutlined,
     TeamOutlined,
     UploadOutlined,
@@ -13,6 +14,7 @@ import {
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { NavLink, Outlet } from 'react-router-dom';
+
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -34,18 +36,21 @@ function getItem(
 
 const items: MenuItem[] = [
     getItem(<NavLink to="/admin">Thống kê</NavLink>, "1", <PieChartOutlined />),
-    getItem("Sản phẩm", "sub1", <DesktopOutlined />, [
+    getItem("Sản phẩm", "sub2", <DesktopOutlined />, [
         getItem(<NavLink to="/admin/products">Danh sách</NavLink>, "2-1"),
         getItem(<NavLink to="/admin/products/add">Thêm sản phẩm</NavLink>, "2-2"),
     ]),
-    getItem("Danh mục", "sub2", <TagsOutlined />, [
+    getItem("Danh mục", "sub3", <TagsOutlined />, [
         getItem(<NavLink to="/admin/categories">Danh sách</NavLink>, "3-1"),
         getItem(<NavLink to="/admin/categories/add">Thêm danh mục</NavLink>, "3-2"),
     ]),
-    getItem("Tài khoản", "sub3", <UserOutlined />, [
+    getItem("Tài khoản", "sub4", <UserOutlined />, [
         getItem(<NavLink to="/admin/users">Danh sách</NavLink>, "4-1"),
         getItem(<NavLink to="/admin/users/add">Thêm tài khoản</NavLink>, "4-2")
     ]),
+    getItem("Đơn hàng", "sub5", <ShoppingCartOutlined/>, [
+        getItem(<NavLink to="/admin/orders" >Danh sách đơn hàng</NavLink>, "5-1"),
+    ])
 ];
 
 
