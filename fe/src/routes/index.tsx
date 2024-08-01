@@ -21,6 +21,7 @@ import { Route, Routes } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import OdersManagementPage from "@/pages/(dashboard)/oders/pages";
 import OrderDetailPage from "@/pages/(dashboard)/oders/[id]/page";
+import OrderStatelPage from "@/pages/(dashboard)/oders/status/page";
 
 const Router = () => {
     return (
@@ -47,6 +48,7 @@ const Router = () => {
                     <Route path="users/:id/edit" element={<UserEditAdminPage />} />
                     <Route path="orders" element={<OdersManagementPage />} />
                     <Route path="orders/:userId/:orderId" element={<OrderDetailPage />} />
+                    <Route path="orders/:userId/:orderId/status" element={<OrderStatelPage />} />
                 </Route>
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>

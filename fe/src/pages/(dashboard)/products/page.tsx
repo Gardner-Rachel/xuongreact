@@ -104,7 +104,7 @@ const ProductsManagementPage = () => {
       filters: data ? createProductFilters(data?.data?.data) : [],
       sorter: (a: IProduct, b: IProduct) => a.name.localeCompare(b.name),
       onFilter: (value: string, product: IProduct) =>
-        product.name.includes(value),
+      product.name.includes(value),
       sortDirections: ["ascend", "descend"],
     },
     {
