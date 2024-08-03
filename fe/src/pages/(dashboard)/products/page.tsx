@@ -35,6 +35,8 @@ const ProductsManagementPage = () => {
     },
     {}
   );
+  console.log(categoriesData);
+  
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["products", currentPage, pageSize],
@@ -167,7 +169,10 @@ const ProductsManagementPage = () => {
         const { _id } = product;
         return (
           <div className="flex flex-col space-y-2">
-            <Button>
+            <Button type="primary">
+              <Link to={`/admin/products/${product._id}`}>Chi tiết</Link>
+            </Button>
+            <Button style={{ color: '#1890ff' }}>
               <Link to={`/admin/products/${product._id}/edit`}>Cập nhật</Link>
             </Button>
             <Popconfirm

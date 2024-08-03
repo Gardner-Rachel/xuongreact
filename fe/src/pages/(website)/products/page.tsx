@@ -95,7 +95,7 @@ const ShopPage = (props: Props) => {
                             <strong className="lg:text-2xl mb:text-lg lg:tracking-[-0.5px] mb:mx-11 lg:mx-0 font-medium">
                                 Top Selling
                             </strong>
-                            <Swiper spaceBetween={50} slidesPerView={3}>
+                            <Swiper spaceBetween={50} slidesPerView={4}>
                                 {products?.data?.data?.map((product: any, index: number) => (
                                     <SwiperSlide key={index}>
                                         <ProductItem product={product} />

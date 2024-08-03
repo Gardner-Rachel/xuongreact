@@ -16,4 +16,10 @@
       padding-right: 64px;
     }
   }
-  
+
+ /* styles/style.css */
+.large-label .ant-form-item-label > label {
+  font-size: 16px; 
+  font-weight: 500 ; 
+  color: black;
+}

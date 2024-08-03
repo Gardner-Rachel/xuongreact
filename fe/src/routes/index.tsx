@@ -22,6 +22,7 @@ import PrivateRoute from "./PrivateRoute";
 import OdersManagementPage from "@/pages/(dashboard)/oders/pages";
 import OrderDetailPage from "@/pages/(dashboard)/oders/[id]/page";
 import OrderStatelPage from "@/pages/(dashboard)/oders/status/page";
+import ProductDetailManagement from "@/pages/(dashboard)/products/[id]/page";
 
 const Router = () => {
     return (
@@ -39,6 +40,7 @@ const Router = () => {
                     <Route index element={<DashboardPage />} />
                     <Route path="products" element={<ProductsManagementPage />} />
                     <Route path="products/add" element={<ProductAddPage/>} />
+                    <Route path="products/:id" element={<ProductDetailManagement/>} />
                     <Route path="products/:id/edit" element={<ProductEditPage />} />
                     <Route path="categories" element={<CategoryManagementPage />} />
                     <Route path="categories/add" element={<CategoryAddPage />} />
