@@ -6,6 +6,7 @@ type ProductItemProps = {
     product: IProduct;
 };
 
+
 const ProductItem = ({ product }: ProductItemProps) => {
     return (
         <>

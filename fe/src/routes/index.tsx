@@ -23,6 +23,7 @@ import OdersManagementPage from "@/pages/(dashboard)/oders/pages";
 import OrderDetailPage from "@/pages/(dashboard)/oders/[id]/page";
 import OrderStatelPage from "@/pages/(dashboard)/oders/status/page";
 import ProductDetailManagement from "@/pages/(dashboard)/products/[id]/page";
+import OrderPage from "@/pages/(website)/order/page";
 
 const Router = () => {
     return (
@@ -35,6 +36,7 @@ const Router = () => {
                     <Route path="products" element={<ShopPage />} />
                     <Route path="products/:id" element={<ProductDetailPage />} />
                     <Route path="cart" element={<CartPage />} />
+                    <Route path="order" element={<OrderPage />} />
                 </Route>
                 <Route path="admin" element={<PrivateRoute requiredRole="admin"><LayoutAdmin /></PrivateRoute>}>
                     <Route index element={<DashboardPage />} />

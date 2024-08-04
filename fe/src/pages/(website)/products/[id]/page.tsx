@@ -3,10 +3,15 @@ import instance from "@/configs/axios";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "antd";
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import ProductItems from "../../_components/ProductItems";
+import {
+  CarOutlined,
+  ClockCircleOutlined,
+  CustomerServiceOutlined,
+} from "@ant-design/icons";
 
 type Props = {};
 
@@ -90,14 +95,14 @@ const ProductDetailPage = (props: Props) => {
             <div className="flex flex-col lg:gap-y-5">
               {/* row 1 */}
               <div className="lg:h-[211px] flex flex-col lg:gap-y-4">
-                {/* <span className="text-[#9D9EA2] lg:text-sm mb:text-xs lg:tracking-[4px] mb:tracking-[2px]">
-                  CONCENTRATES
-                </span> */}
-                <strong className="lg:text-[40px] lg:mt-[1px] mb:mt-3.5 mb:text-[20px] lg:tracking-[-1.2px] font-semibold lg:leading-[38.4px]">
+                <span className="text-[#9D9EA2] font-bold lg:text-sm mb:text-xs lg:tracking-[4px] mb:tracking-[2px]">
+                  Thông tin sản phẩm
+                </span>
+                <strong className="lg:text-[40px] lg:mt-[1px] mb:mt-3.5 mb:text-[20px] lg:tracking-[-1.2px] font-bold lg:leading-[38.4px]">
                   {product?.data?.name}
                 </strong>
                 <div className="*:bg-[#F2F6F4] *:lg:rounded-lg *:lg:px-4 *:lg:py-2.5 *:text-[#05422C] flex items-center lg:gap-x-4 *:text-xs lg:my-0 mb:mt-3 mb:mb-2 *:mb:px-2.5 *:mb:py-[5.5px] mb:gap-2 *:mb:rounded">
-                  {productCategories.map((categoryId: string) => {
+                  {/* {productCategories.map((categoryId: string) => {
                     const category = categoryOptions.find(
                       (option: { value: string | number; label: string }) =>
                         option.value === categoryId
@@ -110,21 +115,21 @@ const ProductDetailPage = (props: Props) => {
                         {category.label}
                       </Button>
                     ) : null;
-                  })}
+                  })} */}
                 </div>
                 <div className="flex lg:items-center mb:items-end justify-between">
                   <span className="font-medium text-[#EB2606] lg:text-xl lg:tracking-[0.7px] mb:text-base flex flex-col items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
                     <del
-                      className="font-light lg:text-sm mb:text-sm text-[#9D9EA2] mr-8"
+                      className="font-bold lg:text-sm mb:text-sm text-[#9D9EA2] mr-12"
                       style={{ fontSize: "1rem" }}
                     >
-                      {product?.data?.price}đ
+                      {product?.data?.price} VNĐ
                     </del>
                     <div
-                      className="mt-2"
-                      style={{ fontSize: "1.5rem", fontWeight: "600" }}
+                      className="mt-2 font-bold"
+                      style={{ fontSize: "1.5rem" }}
                     >
-                      {product?.data?.discount}đ
+                      {product?.data?.discount} VNĐ
                     </div>
                   </span>
                   <section className="lg:w-[163px] mb:w-[157px] mb:mt-[8px] lg:mt-0 h-[21px] *:lg:text-sm *:mb:text-xs flex justify-between items-start">
@@ -156,15 +161,16 @@ const ProductDetailPage = (props: Props) => {
 
               {/* row 3 */}
               <div className="flex flex-col lg:gap-y-3 mb:gap-y-2 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px]">
-                <span className="text-xl tracking-[1px] text-black font-medium">
+                <span className="text-xl tracking-[1px] text-black font-bold">
                   Mô tả sản phẩm
                 </span>
                 <p
                   style={{
-                    fontSize: "14px",
+                    fontSize: "13px",
                     color: "#46494F",
                     whiteSpace: "pre-wrap", // Giữ nguyên khoảng cách và xuống dòng theo định dạng gốc
                   }}
+                  className="font-bold"
                 >
                   {product?.data.description}
                 </p>
@@ -209,46 +215,43 @@ const ProductDetailPage = (props: Props) => {
                           strokeLinejoin="round"
                           className="lucide lucide-plus"
                         >
-                          <path d="M5 12h14" />
+                          <path d="M5 12h14" /> 
                           <path d="M12 5v14" />
                         </svg>
                       </button>
                     </div>
                     |
-                    <span className="text-[#17AF26] lg:tracking-[0.5px]">
+                    <span className="text-[#17AF26] lg:tracking-[0.5px] font-bold">
                       Trong kho: {product?.data.countInStock}
                     </span>
                   </div>
                   {/* add cart */}
-                  <button className="lg:text-base mb:text-sm font-medium flex place-items-center gap-x-4 text-white bg-[#17AF26] rounded-[100px] lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12">
-                    <span>Thêm vào giỏ hàng</span> | <span>$242.00</span>
+                  <button className="lg:text-base mb:text-sm font-bold flex place-items-center gap-x-4 text-white bg-[#17AF26] rounded-[100px] lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12">
+                    <Link to={`/cart`}>
+                      <span>Thêm vào giỏ hàng</span>
+                      {/* | <span>$242.00</span> */}
+                    </Link>
                   </button>
                 </div>
                 {/* service , voucher */}
-                <section className="flex lg:mt-0 mt-0.5 flex-col pt-[23px] gap-y-[13px] *:flex *:items-center *:gap-x-2 *:lg:text-sm *:mb:text-xs *:text-[#46494F]">
+                <section className="flex lg:mt-0 mt-0.5 flex-col pt-[23px] gap-y-[13px] *:flex *:items-center *:gap-x-2 *:lg:text-sm *:mb:text-xs *:text-[#46494F] font-bold">
                   <span>
-                    <img src="../Images/tick-circle.png" />
+                    <CarOutlined />
                     Miễn phí vận chuyển nhanh cho đơn hàng trên{" "}
-                    <p className="text-[#F2BC1B]">250.000 Đ</p>
+                    <p className="text-[#F2BC1B]">250.000 VNĐ</p>
                   </span>
                   <span>
-                    <img src="../Images/tick-circle.png" />
+                    <ClockCircleOutlined />
                     Đặt hàng trước 12:00pm để được gửi trong cùng ngày
                   </span>
                   <span>
-                    <img src="../Images/tick-circle.png" />
+                    <CustomerServiceOutlined />
                     Hỗ trợ & đặt hàng mở cửa 7 ngày trong tuần
                   </span>
                 </section>
               </div>
               {/* different */}
               <div className="grid justify-between lg:gap-y-0 mb:gap-y-4 lg:text-sm mb:text-xs *:flex border-t lg:pt-6 lg:mt-0 mb:pt-[18px] mb:mt-5 mb:grid-cols-full">
-                {/* <span className="lg:gap-x-[84px] gap-x-[78px] font-light text-[#717378]">
-                  Slug{" "}
-                  <p className="font-normal text-[#060709]">
-                    :&nbsp;&nbsp;&nbsp; {product?.data.Slug}
-                  </p>
-                </span> */}
                 <span className="font-light text-[#717378] lg:gap-x-[50px] mb:gap-x-10">
                   Danh mục{" "}
                   <p className="text-[#17AF26] font-normal flex items-center space-x-2">
@@ -275,15 +278,16 @@ const ProductDetailPage = (props: Props) => {
           <span className="lg:text-2xl text-2xl lg:tracking-[-0.5px] font-bold">
             SẢN PHẨM TƯƠNG TỰ
           </span>
-          <Swiper spaceBetween={50} slidesPerView={4}>
-            {products?.data?.data?.map((product: any, index: number) => (
-              <SwiperSlide key={index}>
-                <ProductItems product={product} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
 
-          
+          <Swiper spaceBetween={50} slidesPerView={4}>
+            {products?.data?.data
+              ?.slice(0, 4)
+              .map((product: any, index: number) => (
+                <SwiperSlide key={index}>
+                  <ProductItems product={product} />
+                </SwiperSlide>
+              ))}
+          </Swiper>
         </div>
       </main>
     </>

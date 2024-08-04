@@ -23,7 +23,7 @@ function getItem(
 }
 
 const Account = () => {
-    const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
   const navigate = useNavigate();
 
