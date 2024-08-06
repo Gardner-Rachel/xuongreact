@@ -24,6 +24,10 @@ import OrderDetailPage from "@/pages/(dashboard)/oders/[id]/page";
 import OrderStatelPage from "@/pages/(dashboard)/oders/status/page";
 import ProductDetailManagement from "@/pages/(dashboard)/products/[id]/page";
 import OrderPage from "@/pages/(website)/order/page";
+import SearchPage from "@/pages/(website)/search/page";
+import SearchPageCategory from "@/pages/(website)/search/category/page";
+
+
 
 const Router = () => {
     return (
@@ -37,6 +41,8 @@ const Router = () => {
                     <Route path="products/:id" element={<ProductDetailPage />} />
                     <Route path="cart" element={<CartPage />} />
                     <Route path="order" element={<OrderPage />} />
+                    <Route path="search" element={<SearchPage />} />
+                    <Route path="search/category" element={<SearchPageCategory />} />
                 </Route>
                 <Route path="admin" element={<PrivateRoute requiredRole="admin"><LayoutAdmin /></PrivateRoute>}>
                     <Route index element={<DashboardPage />} />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu, Dropdown } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { HomeOutlined, DownOutlined, ShopOutlined, ShoppingOutlined, WhatsAppOutlined, QuestionCircleOutlined, CreditCardOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import instance from '@/configs/axios';
@@ -15,6 +15,7 @@ const menuList = [
 ];
 
 const Nav: React.FC = () => {
+    const navigate = useNavigate();
     const { data: categories, isLoading, error, isError } = useQuery({
         queryKey: ["categories"],
         queryFn: () => instance.get(`/categories`),
@@ -23,13 +24,12 @@ const Nav: React.FC = () => {
     const categoryMenu = (
         <Menu>
             {categories?.data.map((category: any, index: number) => (
-                <Menu.Item key={index}>
-                    <Link to={category.url}>{category.name}</Link>
+                <Menu.Item key={index} onClick={() => navigate(`/search/category?category=${category._id}`)}> {/* Đổi URL điều hướng */}
+                    <span>{category.name}</span>
                 </Menu.Item>
             ))}
         </Menu>
     );
-    
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>{error.message}</div>;

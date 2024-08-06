@@ -1,10 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import Product from "../models/product";
+import slugify from 'slugify';
 
 export const create = async (req, res) => {
     try {
-        const product = await Product.create(req.body);
-
+        const { name, ...rest } = req.body;
+        const slug = req.body.slug || slugify(name, { lower: true });
+        const product = await Product.create({ name, slug, ...rest });
         return res.status(StatusCodes.CREATED).json(product);
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
@@ -12,19 +14,28 @@ export const create = async (req, res) => {
 };
 
 export const getAllProducts = async (req, res) => {
-    const { _page = 1, _limit = 10, _sort = "createdAt", _order = "asc", _expand } = req.query;
+    const { _page = 1, _limit = 10, _sort = "createdAt", _order = "asc", _expand, search, category } = req.query;
+    // Tạo điều kiện tìm kiếm
+    const searchCondition = search ? { name: { $regex: new RegExp(search, 'i') } } : {};
+    // Tạo điều kiện tìm kiếm theo danh mục
+    const categoryCondition = category ? { category: category } : {};
+
     const options = {
         page: _page,
         limit: _limit,
         sort: { [_sort]: _order === "desc" ? -1 : 1 },
     };
+
     const populateOptions = _expand ? [{ path: "category", select: "name" }] : [];
+    
     try {
         const result = await Product.paginate(
-            { categoryId: null },
+            { ...searchCondition, ...categoryCondition }, 
             { ...options, populate: populateOptions }
         );
+
         if (result.docs.length === 0) return res.status(StatusCodes.OK).json({ data: [] });
+
         const response = {
             data: result.docs,
             pagination: {

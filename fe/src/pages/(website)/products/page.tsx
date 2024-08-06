@@ -110,8 +110,8 @@ const ShopPage = (props: Props) => {
                         <div className="lg:w-full mb:w-full lg:rounded-3xl lg:my-8 mb:my-2 lg:h-[460px] mb:h-[671px] bg-gradient-to-r from-[#05422C] lg:pl-[56px] lg:pr-[88px] to-[#648A7C] mb:py-6 flex lg:flex-row mb:flex-col items-center justify-between">
                             {/* left */}
                             <div className="lg:w-[341px] lg:h-[348px] mb:h-[239px] w-[342px] text-white flex flex-col justify-between">
-                                <span className="lg:text-sm mb:text-xs opacity-30 lg:tracking-[4px] mb:tracking-[2px]">
-                                    CONCENTRATES
+                                <span className="lg:text-sm font-bold mb:text-xs opacity-30 lg:tracking-[4px] mb:tracking-[2px]">
+                                    BÁN CHẠY
                                 </span>
                                 <strong className="lg:text-[32px] lg:leading-[38px] mb:text-[24px] lg:font-semibold lg:tracking-[-1.4px] lg:-mt-1 mt-1.5 font-medium tracking-[-0.5px]">
                                     Mix And Match Shatter/
@@ -142,14 +142,9 @@ const ShopPage = (props: Props) => {
                                         <span className="text-[#C8C9CB]">Reviews</span>
                                     </div>
                                 </section>
-                                <div className="flex *:text-xs *:py-[7px] *:px-[10px] gap-x-2 my-3 *:border *:rounded">
-                                    <button>28g</button>
-                                    <button>1/2lb</button>
-                                    <button>1/4lb</button>
-                                </div>
                                 <div className="flex justify-between items-center">
-                                    <button className="bg-[#17AF26] lg:w-[172px] lg:h-[56px] lg:px-0 px-[19px] mb:h-[40px] grid place-items-center rounded-[100px] lg:text-base text-sm text-white">
-                                        Add to Cart
+                                    <button className="bg-[#17AF26] font-bold lg:w-[172px] lg:h-[56px] lg:px-0 px-[19px] mb:h-[40px] grid place-items-center rounded-[100px] lg:text-base text-sm text-white">
+                                        Thêm vào giỏ hàng
                                     </button>
                                     <span className="font-normal lg:text-xl mb:text-lg text-[#F2BC1B]">
                                         $102.00{" "}
