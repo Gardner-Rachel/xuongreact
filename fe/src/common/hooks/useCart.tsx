@@ -18,7 +18,7 @@ const fetchCart = async (userId: string) => {
 
 const modifyCart = async (action: string, params: CartActionParams) => {
     const url = `${BASE_URL}/carts/${action}`;
-    const { data } = await axios.post(url, params);
+    const { data } = await axios.put(url, params);
     return data.cart;
 };
 
@@ -49,20 +49,15 @@ const useCart = (userId: string) => {
         });
     };
 
-    const cartActions = (action: string) => ({
-        mutate: (productId: string, quantity?: number) =>
-            performMutation(action).mutate({ userId, productId, quantity }),
-    });
-
     return {
         cart,
         isLoading,
         error,
-        addItem: cartActions("add-to-cart"),
-        updateQuantity: cartActions("update"),
-        removeItem: cartActions("remove").mutate,
-        increaseQuantity: cartActions("increase").mutate,
-        decreaseQuantity: cartActions("decrease").mutate,
+        addItem: performMutation("add-to-cart"),
+        updateQuantity: performMutation("update"),
+        removeItem: performMutation("remove"),
+        increaseQuantity: performMutation("increase"),
+        decreaseQuantity: performMutation("decrease"),
     };
 };
 

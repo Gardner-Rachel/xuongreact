@@ -28,7 +28,7 @@ const Header = (props: Props) => {
               />
             </NavLink>
 
-            {/* form desktop */}
+            {/* form desktop  */}
             <div className="mb:hidden lg:block *:h-[48px]">
               <FormSearch />
             </div>

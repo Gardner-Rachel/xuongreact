@@ -3,7 +3,7 @@ import instance from "@/configs/axios";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "antd";
 import React, { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, NavLink, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import ProductItems from "../../_components/ProductItems";
@@ -39,6 +39,24 @@ const ProductDetailPage = (props: Props) => {
       value: category._id,
       label: category.name,
     }));
+
+  // const addToCart = () => {
+  //   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  //   const existingProductIndex = cart.findIndex(
+  //     (item: any) => item._id === product?.data._id
+  //   );
+
+  //   if (existingProductIndex >= 0) {
+
+  //     cart[existingProductIndex].quantity += 1;
+  //   } else {
+
+  //     cart.push({ ...product?.data, quantity: 1 });
+  //   }
+
+  //   localStorage.setItem("cart", JSON.stringify(cart));
+  //   alert("Sản phẩm đã được thêm vào giỏ hàng!");
+  // };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -215,7 +233,7 @@ const ProductDetailPage = (props: Props) => {
                           strokeLinejoin="round"
                           className="lucide lucide-plus"
                         >
-                          <path d="M5 12h14" /> 
+                          <path d="M5 12h14" />
                           <path d="M12 5v14" />
                         </svg>
                       </button>
@@ -226,11 +244,18 @@ const ProductDetailPage = (props: Props) => {
                     </span>
                   </div>
                   {/* add cart */}
+                  {/* <Button
+                    className="bg-[#F8E81C] border-none w-full lg:py-4 mb:py-3 text-lg font-bold text-[#051C2C]"
+                    onClick={addToCart}
+                  >
+                    Thêm vào giỏ hàng
+                  </Button> */}
+
                   <button className="lg:text-base mb:text-sm font-bold flex place-items-center gap-x-4 text-white bg-[#17AF26] rounded-[100px] lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12">
-                    <Link to={`/cart`}>
+                    <NavLink to={`/cart`}>
                       <span>Thêm vào giỏ hàng</span>
                       {/* | <span>$242.00</span> */}
-                    </Link>
+                    </NavLink>
                   </button>
                 </div>
                 {/* service , voucher */}

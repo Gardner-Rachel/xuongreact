@@ -1,27 +1,40 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-const BASE_URL = "http://your-api-url";
+const BASE_URL = "http://localhost:8080/api";
 
 interface OrderActionParams {
     userId: string;
     orderId?: string;
-    // Thêm các trường khác tùy thuộc vào logic của bạn
+    items?: any[];
+    totalPrice?: number;
+    customerName?: string;
+    status?: string;
 }
 
 const ORDER_QUERY_KEY = "order";
 
-const fetchOrder = async (userId: string) => {
-    const { data } = await axios.get(`${BASE_URL}/orders/${userId}`);
+const fetchOrder = async (userId: string, orderId?: string) => {
+    const url = orderId 
+        ? `${BASE_URL}/orders/${userId}/${orderId}` 
+        : `${BASE_URL}/orders/${userId}`;
+    const { data } = await axios.get(url);
     return data;
 };
 
 const modifyOrder = async (action: string, params: OrderActionParams) => {
-    const url = `${BASE_URL}/orders/${action}`;
-    const { data } = await axios.post(url, params);
-    return data.order;
+    let url = `${BASE_URL}/orders`;
+    if (action === ACTION_TYPES.UPDATE_STATUS) {
+        url += `/${params.userId}/${params.orderId}/status`;
+        const { data } = await axios.patch(url, { status: params.status });
+        return data;
+    } else {
+        const method = action === ACTION_TYPES.CREATE ? 'post' : 'put';
+        const { data } = await axios[method](url, params);
+        return data.order;
+    }
 };
-// Tiếp tục từ đoạn code đã cho...
+
 
 // Định nghĩa các loại hành động
 const ACTION_TYPES = {
@@ -29,8 +42,8 @@ const ACTION_TYPES = {
     UPDATE: "update",
     UPDATE_STATUS: "updateStatus",
 };
-// Cập nhật hàm useOrder để bao gồm các hành động này
-const useOrder = (userId: string) => {
+
+const useOrder = (userId: string, orderId?: string) => {
     const queryClient = useQueryClient();
 
     const {
@@ -38,15 +51,15 @@ const useOrder = (userId: string) => {
         isLoading,
         error,
     } = useQuery({
-        queryKey: [ORDER_QUERY_KEY, userId],
-        queryFn: () => fetchOrder(userId),
+        queryKey: [ORDER_QUERY_KEY, userId, orderId],
+        queryFn: () => fetchOrder(userId, orderId || ''),
         enabled: !!userId,
     });
 
     const mutationOptions = {
         onSuccess: () =>
             queryClient.invalidateQueries({
-                queryKey: [ORDER_QUERY_KEY, userId],
+                queryKey: [ORDER_QUERY_KEY, userId, orderId],
             }),
     };
 
@@ -59,27 +72,30 @@ const useOrder = (userId: string) => {
 
     const orderActions = (action: string) => ({
         mutate: (params: OrderActionParams) =>
-            performMutation(action).mutate({ userId, ...params }),
+            performMutation(action).mutate(params),
     });
+
     // Hàm tạo đơn hàng mới
-    const createOrder = (orderDetails) => orderActions(ACTION_TYPES.CREATE).mutate(orderDetails);
+    const createOrder = (orderDetails: Omit<OrderActionParams, 'userId'>) =>
+        orderActions(ACTION_TYPES.CREATE).mutate({ userId, ...orderDetails });
 
     // Hàm cập nhật đơn hàng
-    const updateOrder = (orderId, orderDetails) =>
-        orderActions(ACTION_TYPES.UPDATE).mutate({ orderId, ...orderDetails });
+    const updateOrder = (orderId: string, orderDetails: Omit<OrderActionParams, 'userId' | 'orderId'>) =>
+        orderActions(ACTION_TYPES.UPDATE).mutate({ userId, orderId, ...orderDetails });
 
     // Hàm cập nhật trạng thái đơn hàng
-    const updateOrderStatus = (orderId, status) =>
-        orderActions(ACTION_TYPES.UPDATE_STATUS).mutate({ orderId, status });
+    const updateOrderStatus = (orderId: string, status: string) =>
+        orderActions(ACTION_TYPES.UPDATE_STATUS).mutate({ userId, orderId, status });
 
     return {
         order,
         isLoading,
         error,
-        createOrder: (orderDetails) => createOrder(orderDetails),
-        updateOrder: (orderId, orderDetails) => updateOrder(orderId, orderDetails),
-        updateOrderStatus: (orderId, status) => updateOrderStatus(orderId, status),
+        createOrder,
+        updateOrder,
+        updateOrderStatus,
     };
 };
+
 
 export default useOrder;

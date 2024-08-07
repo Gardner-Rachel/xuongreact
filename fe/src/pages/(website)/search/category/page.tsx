@@ -26,7 +26,7 @@ const SearchPageCategory: React.FC = () => {
   return (
     <div>
       <strong className="lg:text-[30px] mb:text-[32px] lg:leading-[70px] mb:leading-[40px] lg:tracking-[-3px] mb:tracking-[-1.8px]">
-        {category}
+        HÀNG MỚI CẬP NHẬT
       </strong>
       <div className="lg:w-full mb:w-[342px] md:w-[95vw] grid lg:my-[41px] my-6 lg:grid-cols-[304px_304px_304px_304px] mb:grid-cols-[159px_159px] lg:gap-y-8 gap-y-[29.5px] text-center justify-between">
         {products.length > 0 ? (

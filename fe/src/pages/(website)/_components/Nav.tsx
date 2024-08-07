@@ -31,7 +31,7 @@ const Nav: React.FC = () => {
         </Menu>
     );
 
-    if (isLoading) return <div>Loading...</div>;
+   
     if (isError) return <div>{error.message}</div>;
     return (
         <Menu mode="horizontal" className="w-full flex justify-center">

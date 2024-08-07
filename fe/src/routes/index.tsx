@@ -40,7 +40,7 @@ const Router = () => {
                     <Route path="products" element={<ShopPage />} />
                     <Route path="products/:id" element={<ProductDetailPage />} />
                     <Route path="cart" element={<CartPage />} />
-                    <Route path="order" element={<OrderPage />} />
+                    <Route path="order" element={<OrderPage />} />  
                     <Route path="search" element={<SearchPage />} />
                     <Route path="search/category" element={<SearchPageCategory />} />
                 </Route>
