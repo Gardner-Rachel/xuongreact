@@ -57,17 +57,16 @@ const CartPage = () => {
   };
 
   const handleCheckout = () => {
-    const totalQuantity = cart?.products.reduce((total: number, item: any) => total + item.quantity, 0) || 0;
     const totalPrice = cart?.products.reduce((total: number, item: any) => total + item.price * item.quantity, 0) || 0;
 
     // Lưu thông tin giỏ hàng vào localStorage
     localStorage.setItem('cart', JSON.stringify({
-      items: cart.products,
-      totalPrice,
+        items: cart.products,
+        totalPrice,
     }));
 
     navigate('/order'); // Chuyển hướng đến trang OrderPage
-  };
+};
 
   const columns = [
     {

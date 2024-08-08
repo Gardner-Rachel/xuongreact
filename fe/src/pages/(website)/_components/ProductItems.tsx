@@ -1,4 +1,7 @@
 import { IProduct } from "@/common/types/product";
+import instance from "@/configs/axios";
+import { useMutation } from "@tanstack/react-query";
+import { Button, message } from "antd";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -7,6 +10,40 @@ type ProductItemProps = {
 };
 
 const ProductItems = ({ product }: ProductItemProps) => {
+  const addToCartMutation = useMutation({
+    mutationFn: (cartData: {
+      userId: string;
+      productId: string;
+      quantity: number;
+    }) => instance.post("/carts/add-to-cart", cartData),
+    onSuccess: () => {
+      message.success("Sản phẩm đã được thêm vào giỏ hàng!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra, vui lòng thử lại!");
+    },
+  });
+
+  const handleAddToCart = () => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const userId = user._id;
+    const quantity = 1;
+
+    if (!userId) {
+      message.error(
+        "Bạn cần phải đăng nhập trước khi thêm sản phẩm vào giỏ hàng."
+      );
+      return;
+    }
+
+    if (!product._id) {
+      message.error("Sản phẩm không hợp lệ.");
+      return;
+    }
+    const productId = String(product._id);
+    addToCartMutation.mutate({ userId, productId, quantity });
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -61,9 +98,16 @@ const ProductItems = ({ product }: ProductItemProps) => {
                 </span>
               </div>
 
-              <button className="bg-[#17AF26] lg:w-[158px] mb:w-[118px] lg:mt-[11px] mb:mt-[14.5px] h-[40px] grid place-items-center rounded-[100px] lg:text-sm mb:text-xs text-white font-bold">
+              <Button
+                type="primary"
+                onClick={handleAddToCart}
+                className="lg:text-base mb:text-sm font-bold text-white bg-[#17AF26] rounded-[100px] lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12"
+              >
                 Thêm vào giỏ hàng
-              </button>
+              </Button>
+              {/* <button className="bg-[#17AF26] lg:w-[158px] mb:w-[118px] lg:mt-[11px] mb:mt-[14.5px] h-[40px] grid place-items-center rounded-[100px] lg:text-sm mb:text-xs text-white font-bold">
+                Thêm vào giỏ hàng
+              </button> */}
             </div>
           </div>
         </div>

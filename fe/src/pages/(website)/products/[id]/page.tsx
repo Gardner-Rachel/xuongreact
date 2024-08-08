@@ -1,7 +1,7 @@
 import { ICategory } from "@/common/types/category";
 import instance from "@/configs/axios";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "antd";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Button, message } from "antd";
 import React, { useEffect } from "react";
 import { Link, NavLink, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -12,6 +12,7 @@ import {
   ClockCircleOutlined,
   CustomerServiceOutlined,
 } from "@ant-design/icons";
+import { CartActionParams } from "@/common/hooks/useCart";
 
 type Props = {};
 
@@ -30,6 +31,29 @@ const ProductDetailPage = (props: Props) => {
     queryFn: () => instance.get("/products"),
   });
 
+  const addToCartMutation = useMutation({
+    mutationFn: (cartData: CartActionParams) => instance.post("/carts/add-to-cart", cartData),
+    onSuccess: () => {
+      message.success("Sản phẩm đã được thêm vào giỏ hàng!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra, vui lòng thử lại!");
+    },
+  });
+
+  const handleAddToCart = () => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const userId = user._id; 
+    const quantity = 1; 
+  
+    if (!userId) {
+      message.error("Bạn cần phải đăng nhập trước khi thêm sản phẩm vào giỏ hàng.");
+      return;
+    }
+  
+    addToCartMutation.mutate({ userId, productId: id!, quantity });
+  };
+
   const productCategories = product?.data.category || [];
   const categoryOptions = categories?.data
     .filter((category: { _id: number | string; name: string }) =>
@@ -39,24 +63,6 @@ const ProductDetailPage = (props: Props) => {
       value: category._id,
       label: category.name,
     }));
-
-  // const addToCart = () => {
-  //   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  //   const existingProductIndex = cart.findIndex(
-  //     (item: any) => item._id === product?.data._id
-  //   );
-
-  //   if (existingProductIndex >= 0) {
-
-  //     cart[existingProductIndex].quantity += 1;
-  //   } else {
-
-  //     cart.push({ ...product?.data, quantity: 1 });
-  //   }
-
-  //   localStorage.setItem("cart", JSON.stringify(cart));
-  //   alert("Sản phẩm đã được thêm vào giỏ hàng!");
-  // };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -120,7 +126,7 @@ const ProductDetailPage = (props: Props) => {
                   {product?.data?.name}
                 </strong>
                 <div className="*:bg-[#F2F6F4] *:lg:rounded-lg *:lg:px-4 *:lg:py-2.5 *:text-[#05422C] flex items-center lg:gap-x-4 *:text-xs lg:my-0 mb:mt-3 mb:mb-2 *:mb:px-2.5 *:mb:py-[5.5px] mb:gap-2 *:mb:rounded">
-                  {/* {productCategories.map((categoryId: string) => {
+                  {productCategories.map((categoryId: string) => {
                     const category = categoryOptions.find(
                       (option: { value: string | number; label: string }) =>
                         option.value === categoryId
@@ -133,7 +139,7 @@ const ProductDetailPage = (props: Props) => {
                         {category.label}
                       </Button>
                     ) : null;
-                  })} */}
+                  })}
                 </div>
                 <div className="flex lg:items-center mb:items-end justify-between">
                   <span className="font-medium text-[#EB2606] lg:text-xl lg:tracking-[0.7px] mb:text-base flex flex-col items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
@@ -244,19 +250,20 @@ const ProductDetailPage = (props: Props) => {
                     </span>
                   </div>
                   {/* add cart */}
-                  {/* <Button
-                    className="bg-[#F8E81C] border-none w-full lg:py-4 mb:py-3 text-lg font-bold text-[#051C2C]"
-                    onClick={addToCart}
+                  <Button
+                    type="primary"
+                    onClick={handleAddToCart}
+                    className="lg:text-base mb:text-sm font-bold flex place-items-center gap-x-4 text-white bg-[#17AF26] rounded-[100px] lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12"
                   >
                     Thêm vào giỏ hàng
-                  </Button> */}
+                  </Button>
 
-                  <button className="lg:text-base mb:text-sm font-bold flex place-items-center gap-x-4 text-white bg-[#17AF26] rounded-[100px] lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12">
+                  {/* <button className="lg:text-base mb:text-sm font-bold flex place-items-center gap-x-4 text-white bg-[#17AF26] rounded-[100px] lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12">
                     <NavLink to={`/cart`}>
                       <span>Thêm vào giỏ hàng</span>
-                      {/* | <span>$242.00</span> */}
+                      | <span>$242.00</span>
                     </NavLink>
-                  </button>
+                  </button> */}
                 </div>
                 {/* service , voucher */}
                 <section className="flex lg:mt-0 mt-0.5 flex-col pt-[23px] gap-y-[13px] *:flex *:items-center *:gap-x-2 *:lg:text-sm *:mb:text-xs *:text-[#46494F] font-bold">

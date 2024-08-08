@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8080/api";
 
-interface CartActionParams {
+export interface CartActionParams {
     userId: string;
     productId?: string;
     quantity?: number;
@@ -21,6 +21,13 @@ const modifyCart = async (action: string, params: CartActionParams) => {
     const { data } = await axios.put(url, params);
     return data.cart;
 };
+
+// const modifyCart = async (action: string, params: CartActionParams) => {
+//     const url = `${BASE_URL}/carts/${action}`;
+//     const { data } = await axios.post(url, params); 
+//     return data.cart;
+// };
+
 
 const useCart = (userId: string) => {
     const queryClient = useQueryClient();

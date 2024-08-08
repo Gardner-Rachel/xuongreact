@@ -79,9 +79,9 @@ const OrderPage = () => {
                     label="Danh sách mặt hàng"
                     name="items"
                 >
-                    <Input.TextArea
+                    <Input.TextArea rows={15}
                         placeholder="Danh sách mặt hàng"
-                        readOnly
+                        readOnly    
                     />
                 </Form.Item>
                 <Form.Item
