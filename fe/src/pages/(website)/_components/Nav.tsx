@@ -8,7 +8,7 @@ import instance from '@/configs/axios';
 const menuList = [
     { name: "Trang chủ", url: "/", icon: <HomeOutlined /> },
     { name: "Shop All", url: "/products", icon: <ShopOutlined /> },
-    { name: "Giỏ hàng", url: "/cart", icon: <ShoppingOutlined/>},
+    // { name: "Giỏ hàng", url: "/cart", icon: <ShoppingOutlined/>},
     { name: "Thanh toán", url: "/order", icon: <CreditCardOutlined/>},
     { name: "Giới thiệu", url: "", icon: <QuestionCircleOutlined/>},
     { name: "Liên hệ", url: "", icon: <WhatsAppOutlined/>}
@@ -16,7 +16,7 @@ const menuList = [
 
 const Nav: React.FC = () => {
     const navigate = useNavigate();
-    const { data: categories, isLoading, error, isError } = useQuery({
+    const { data: categories, error, isError } = useQuery({
         queryKey: ["categories"],
         queryFn: () => instance.get(`/categories`),
     });

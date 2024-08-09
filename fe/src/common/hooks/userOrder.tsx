@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8080/api";
 
-interface OrderActionParams {
+export interface OrderActionParams {
     userId: string;
     orderId?: string;
     items?: any[];
@@ -14,12 +14,17 @@ interface OrderActionParams {
 
 const ORDER_QUERY_KEY = "order";
 
-const fetchOrder = async (userId: string, orderId?: string) => {
-    const url = orderId 
-        ? `${BASE_URL}/orders/${userId}/${orderId}` 
-        : `${BASE_URL}/orders/${userId}`;
-    const { data } = await axios.get(url);
-    return data;
+const fetchOrder = async (userId: string, orderId: string) => {
+    if (!orderId) {
+        throw new Error("orderId is required");
+    }
+    const url = `${BASE_URL}/orders/${userId}/${orderId}`;
+    try {
+        const { data } = await axios.get(url);
+        return data;
+    } catch (error: any) {
+        throw new Error(`Error fetching order: ${error.message}`);
+    }
 };
 
 const modifyOrder = async (action: string, params: OrderActionParams) => {
@@ -31,12 +36,10 @@ const modifyOrder = async (action: string, params: OrderActionParams) => {
     } else {
         const method = action === ACTION_TYPES.CREATE ? 'post' : 'put';
         const { data } = await axios[method](url, params);
-        return data.order;
+        return data;
     }
 };
 
-
-// Định nghĩa các loại hành động
 const ACTION_TYPES = {
     CREATE: "create",
     UPDATE: "update",
@@ -53,49 +56,40 @@ const useOrder = (userId: string, orderId?: string) => {
     } = useQuery({
         queryKey: [ORDER_QUERY_KEY, userId, orderId],
         queryFn: () => fetchOrder(userId, orderId || ''),
-        enabled: !!userId,
+        enabled: !!userId && !!orderId,
     });
 
     const mutationOptions = {
-        onSuccess: () =>
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [ORDER_QUERY_KEY, userId, orderId],
-            }),
+            });
+        },
     };
 
-    const performMutation = (action: string) => {
-        return useMutation({
-            mutationFn: (params: OrderActionParams) => modifyOrder(action, params),
-            ...mutationOptions,
-        });
-    };
-
-    const orderActions = (action: string) => ({
-        mutate: (params: OrderActionParams) =>
-            performMutation(action).mutate(params),
+    const createOrder = useMutation({
+        mutationFn: (params: Omit<OrderActionParams, 'userId'>) => modifyOrder(ACTION_TYPES.CREATE, { userId, ...params }),
+        ...mutationOptions,
     });
 
-    // Hàm tạo đơn hàng mới
-    const createOrder = (orderDetails: Omit<OrderActionParams, 'userId'>) =>
-        orderActions(ACTION_TYPES.CREATE).mutate({ userId, ...orderDetails });
+    const updateOrder = useMutation({
+        mutationFn: (params: Omit<OrderActionParams, 'userId' | 'orderId'>) => modifyOrder(ACTION_TYPES.UPDATE, { userId, ...params }),
+        ...mutationOptions,
+    });
 
-    // Hàm cập nhật đơn hàng
-    const updateOrder = (orderId: string, orderDetails: Omit<OrderActionParams, 'userId' | 'orderId'>) =>
-        orderActions(ACTION_TYPES.UPDATE).mutate({ userId, orderId, ...orderDetails });
-
-    // Hàm cập nhật trạng thái đơn hàng
-    const updateOrderStatus = (orderId: string, status: string) =>
-        orderActions(ACTION_TYPES.UPDATE_STATUS).mutate({ userId, orderId, status });
+    const updateOrderStatus = useMutation({
+        mutationFn: (params: Omit<OrderActionParams, 'userId' | 'orderId'>) => modifyOrder(ACTION_TYPES.UPDATE_STATUS, { userId, ...params }),
+        ...mutationOptions,
+    });
 
     return {
         order,
         isLoading,
         error,
-        createOrder,
-        updateOrder,
-        updateOrderStatus,
+        createOrder: createOrder.mutate,
+        updateOrder: updateOrder.mutate,
+        updateOrderStatus: updateOrderStatus.mutate,
     };
 };
-
 
 export default useOrder;
